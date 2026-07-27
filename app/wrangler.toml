@@ -1,0 +1,7 @@
+name = "haykbaroyan-com"
+compatibility_date = "2026-07-28"
+
+# Static Angular build output (prerendered, outputMode: "static" in angular.json).
+# No "main" field needed — this is an assets-only Worker, nothing dynamic to run.
+[assets]
+directory = "./dist/app/browser"
