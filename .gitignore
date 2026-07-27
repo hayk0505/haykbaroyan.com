@@ -6,3 +6,10 @@ dist/
 *.log
 .DS_Store
 .superpowers/
+.claude/
+
+# Reference-only, not deployed — kept locally, not tracked
+design-reference/
+VSCode_Agent_Build_Prompt.md
+Hayk Baroyan Portfolio.html
+Hayk Baroyan Portfolio_v2.html
