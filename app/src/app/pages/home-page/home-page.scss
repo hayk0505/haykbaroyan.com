@@ -1,0 +1,47 @@
+@use 'tokens' as *;
+@use 'page-shell' as *;
+
+.home-page {
+  @extend %page-shell;
+}
+
+.home-page__hero {
+  padding: 60px 48px 46px;
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: 36px 20px 32px;
+  }
+}
+
+.home-page__eyebrow {
+  @extend %page-eyebrow;
+}
+
+.home-page__hero-grid {
+  @include hero-grid(340px);
+}
+
+.home-page__headline {
+  @include page-heading(96px, -0.045em, 0.88);
+}
+
+.home-page__headline-dot {
+  color: $color-accent;
+}
+
+.home-page__intro {
+  @extend %page-description;
+}
+
+.home-page__cards {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: 20px;
+  padding: 0 48px 20px;
+
+  @media (max-width: $breakpoint-mobile) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 0 20px 20px;
+  }
+}

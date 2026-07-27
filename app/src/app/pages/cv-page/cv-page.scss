@@ -1,0 +1,180 @@
+@use 'tokens' as *;
+@use 'page-shell' as *;
+
+.cv-page {
+  @extend %page-shell;
+}
+
+.cv-page__header {
+  padding: 56px 48px 40px;
+  border-bottom: 1px solid $color-border;
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: 36px 20px 28px;
+  }
+}
+
+.cv-page__eyebrow {
+  @extend %page-eyebrow;
+}
+
+.cv-page__name {
+  @include page-heading(72px);
+}
+
+.cv-page__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 24px;
+  font: 400 13px $font-label;
+  color: rgba($color-cream, 0.72);
+}
+
+.cv-page__meta-muted {
+  color: rgba($color-cream, 0.5);
+}
+
+.cv-page__experience-section {
+  padding: 56px 48px 20px;
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: 32px 20px 12px;
+  }
+}
+
+.cv-page__skills-section {
+  padding: 56px 48px;
+  border-top: 1px solid $color-border;
+  margin-top: 36px;
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: 32px 20px;
+    margin-top: 20px;
+  }
+}
+
+.cv-page__education-section {
+  padding: 0 48px 56px;
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: 0 20px 32px;
+  }
+}
+
+.cv-page__section-grid {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 40px;
+
+  @media (max-width: $breakpoint-mobile) {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+}
+
+.cv-page__experience-list,
+.cv-page__education-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.cv-page__skills {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.cv-page__tech-panel {
+  background: $color-cream;
+  color: $color-ink;
+  border-radius: 18px;
+  padding: 28px 32px;
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: 20px 22px;
+  }
+}
+
+.cv-page__panel-label {
+  font: 400 11px $font-label;
+  color: $color-accent;
+  letter-spacing: 0.14em;
+  margin-bottom: 16px;
+}
+
+.cv-page__tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cv-page__skills-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+
+  @media (max-width: $breakpoint-mobile) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.cv-page__panel {
+  border: 1px solid rgba($color-cream, 0.2);
+  border-radius: 18px;
+  padding: 26px 28px;
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: 20px 22px;
+  }
+}
+
+.cv-page__ai-tool {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 14px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.cv-page__ai-tool-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.cv-page__ai-tool-name {
+  font: 700 14px $font-heading;
+}
+
+.cv-page__ai-tool-level {
+  font: 400 11px $font-label;
+  color: $color-accent;
+}
+
+.cv-page__ai-tool-description {
+  margin: 0;
+  font: 400 13px/1.5 $font-body;
+  color: rgba($color-cream, 0.68);
+}
+
+.cv-page__language-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba($color-cream, 0.1);
+  font: 500 15px $font-body;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.cv-page__language-level {
+  font: 700 13px $font-label;
+  color: $color-chip;
+}

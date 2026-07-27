@@ -1,0 +1,21 @@
+@use 'tokens' as *;
+
+:host {
+  display: block;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26px 48px;
+  border-top: 1px solid $color-border;
+  font: 400 12px $font-label;
+  color: rgba($color-cream, 0.55);
+  flex-wrap: wrap;
+  gap: 12px;
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: 22px 20px;
+  }
+}

@@ -1,0 +1,91 @@
+<div class="cv-page">
+  <app-header-nav />
+
+  <div class="cv-page__header">
+    <div class="cv-page__eyebrow">… / CURRICULUM VITAE</div>
+    <h1 class="cv-page__name">Hayk<br />Baroyan</h1>
+    <div class="cv-page__meta">
+      <span>◑ Front-end engineer, building full-stack</span>
+      <span class="cv-page__meta-muted">{{ contact.location }}</span>
+      <span class="cv-page__meta-muted">{{ contact.email }}</span>
+    </div>
+  </div>
+
+  <section class="cv-page__experience-section">
+    <div class="cv-page__section-grid">
+      <app-section-heading heading="Experience" caption="01 — 03" />
+      <div class="cv-page__experience-list">
+        @for (entry of experience; track entry.company; let isLast = $last) {
+          <app-experience-entry
+            [dateLabel]="entry.dateLabel"
+            [badge]="entry.badge ?? ''"
+            [company]="entry.company"
+            [companyLinkLabel]="entry.companyLinkLabel ?? ''"
+            [companyLinkHref]="entry.companyLinkHref ?? ''"
+            [role]="entry.role"
+            [description]="entry.description"
+            [tags]="entry.tags"
+            [isLast]="isLast"
+          />
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="cv-page__skills-section">
+    <div class="cv-page__section-grid">
+      <app-section-heading heading="Skills" caption="stack & tools" />
+      <div class="cv-page__skills">
+        <div class="cv-page__tech-panel">
+          <div class="cv-page__panel-label">LANGUAGES &amp; WEB TECHNOLOGIES</div>
+          <div class="cv-page__tech-tags">
+            @for (tag of techTags; track tag.label) {
+              <app-tag-chip [label]="tag.label" [variant]="tag.emphasized ? 'emphasized' : 'filled'" />
+            }
+          </div>
+        </div>
+        <div class="cv-page__skills-row">
+          <div class="cv-page__panel">
+            <div class="cv-page__panel-label">AI TOOLS &amp; WORKFLOWS</div>
+            @for (tool of aiTools; track tool.name) {
+              <div class="cv-page__ai-tool">
+                <div class="cv-page__ai-tool-top">
+                  <span class="cv-page__ai-tool-name">{{ tool.name }}</span>
+                  <span class="cv-page__ai-tool-level">{{ tool.level }}</span>
+                </div>
+                <p class="cv-page__ai-tool-description">{{ tool.description }}</p>
+              </div>
+            }
+          </div>
+          <div class="cv-page__panel">
+            <div class="cv-page__panel-label">LANGUAGES</div>
+            @for (language of languages; track language.name) {
+              <div class="cv-page__language-row">
+                <span>{{ language.name }}</span>
+                <span class="cv-page__language-level">{{ language.level }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cv-page__education-section">
+    <div class="cv-page__section-grid">
+      <app-section-heading heading="Education" caption="& training" />
+      <div class="cv-page__education-list">
+        @for (entry of education; track entry.title; let isLast = $last) {
+          <app-education-entry
+            [dateLabel]="entry.dateLabel"
+            [title]="entry.title"
+            [institution]="entry.institution"
+            [isLast]="isLast"
+          />
+        }
+      </div>
+    </div>
+  </section>
+
+  <app-footer />
+</div>

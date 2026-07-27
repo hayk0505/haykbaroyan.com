@@ -1,0 +1,92 @@
+@use 'tokens' as *;
+@use 'page-shell' as *;
+
+.contact-page {
+  @extend %page-shell;
+}
+
+.contact-page__intro {
+  padding: 56px 48px 40px;
+  border-bottom: 1px solid $color-border;
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: 56px 20px 40px;
+  }
+}
+
+.contact-page__eyebrow {
+  @extend %page-eyebrow;
+}
+
+.contact-page__intro-grid {
+  @include hero-grid(420px);
+}
+
+.contact-page__heading {
+  @include page-heading(76px);
+}
+
+.contact-page__heading-dot {
+  color: $color-accent;
+}
+
+.contact-page__description {
+  @extend %page-description;
+}
+
+.contact-page__body {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 44px;
+  align-items: start;
+  padding: 48px 48px 56px;
+
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: 48px 20px 56px;
+    gap: 22px;
+  }
+}
+
+.contact-page__direct {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.contact-page__direct-label {
+  font: 400 11px $font-label;
+  color: rgba($color-cream, 0.45);
+  letter-spacing: 0.12em;
+  margin-bottom: 14px;
+}
+
+.contact-page__direct-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba($color-cream, 0.12);
+  font: 500 15px $font-body;
+
+  &.contact-page__direct-row--last {
+    border-bottom: none;
+  }
+}
+
+a.contact-page__direct-row:hover {
+  opacity: 0.7;
+}
+
+.contact-page__direct-value {
+  font: 400 12.5px $font-label;
+  color: $color-chip;
+}
+
+.contact-page__direct-value--muted {
+  color: rgba($color-cream, 0.6);
+}

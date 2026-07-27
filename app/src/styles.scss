@@ -1,0 +1,30 @@
+@use 'tokens' as *;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(
+    to right,
+    $color-bg-edge 0%,
+    $color-bg-surface calc((105vw - #{$max-width-page}) / 2),
+    $color-bg-surface calc(100% - (105vw - #{$max-width-page}) / 2),
+    $color-bg-edge 100%
+  );
+  font-family: $font-body;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid $color-accent;
+  outline-offset: 2px;
+}

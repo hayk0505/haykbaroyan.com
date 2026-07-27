@@ -1,0 +1,47 @@
+<header class="header-nav">
+  @if (mobileMenuOpen()) {
+    <div class="header-nav__backdrop" (click)="closeMenu()"></div>
+  }
+  <nav class="header-nav__links" [class.header-nav__links--open]="mobileMenuOpen()">
+    <a routerLink="/" routerLinkActive="header-nav__link--active" [routerLinkActiveOptions]="{ exact: true }" class="header-nav__link" (click)="closeMenu()">Home</a>
+    <a routerLink="/cv" routerLinkActive="header-nav__link--active" class="header-nav__link" (click)="closeMenu()">CV</a>
+    <a routerLink="/projects" routerLinkActive="header-nav__link--active" class="header-nav__link" (click)="closeMenu()">Projects</a>
+    <a routerLink="/contact" routerLinkActive="header-nav__link--active" class="header-nav__link" (click)="closeMenu()">Contact</a>
+  </nav>
+  <button
+    type="button"
+    class="header-nav__burger"
+    (click)="toggleMenu()"
+    [attr.aria-expanded]="mobileMenuOpen()"
+    aria-label="Toggle navigation menu"
+  >
+    <span class="header-nav__burger-line"></span>
+    <span class="header-nav__burger-line"></span>
+    <span class="header-nav__burger-line"></span>
+  </button>
+  <div class="header-nav__buttons">
+    <a [href]="'mailto:' + contact.email" class="header-nav__pill" aria-label="Email">
+      <svg class="header-nav__pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="5" width="18" height="14" rx="2" />
+        <path d="M3 7l9 6 9-6" />
+      </svg>
+      <span class="header-nav__pill-label">Email</span>
+    </a>
+    <a [href]="contact.linkedin" target="_blank" rel="noopener" class="header-nav__pill" aria-label="LinkedIn">
+      <svg class="header-nav__pill-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.5 8h4v15h-4V8zM8.5 8h3.83v2.05h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.77 2.43 4.77 5.93V23h-4v-8.1c0-1.93-.03-4.42-2.69-4.42-2.7 0-3.11 2.11-3.11 4.28V23h-4V8z" />
+      </svg>
+      <span class="header-nav__pill-label">LinkedIn</span>
+    </a>
+    <a [href]="contact.github" target="_blank" rel="noopener" class="header-nav__pill" aria-label="GitHub">
+      <svg class="header-nav__pill-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.8.1-.8.1-.8 1.3.1 2 1.3 2 1.3 1.1 2 3 1.4 3.7 1.1.1-.8.4-1.4.8-1.7-2.7-.3-5.5-1.3-5.5-6a4.6 4.6 0 0 1 1.2-3.2 4.3 4.3 0 0 1 .1-3.2s1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2a4.3 4.3 0 0 1 .1 3.2 4.6 4.6 0 0 1 1.2 3.2c0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z" />
+      </svg>
+      <span class="header-nav__pill-label">GitHub</span>
+    </a>
+    <a href="/assets/Hayk-Baroyan-CV.pdf" download class="header-nav__download">
+      Download CV
+      <span class="header-nav__download-icon">↓</span>
+    </a>
+  </div>
+</header>

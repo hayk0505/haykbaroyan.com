@@ -1,0 +1,33 @@
+<div class="home-page">
+  <app-header-nav />
+  <div class="home-page__hero">
+    <div class="home-page__eyebrow">◑ FRONT-END ENGINEER, BUILDING FULL-STACK</div>
+    <div class="home-page__hero-grid">
+      <h1 class="home-page__headline">Front-end<br />engineer<span class="home-page__headline-dot">.</span></h1>
+      <p class="home-page__intro">
+        Senior front-end engineer with deep <em>React</em> and <em>Angular</em> experience, now going deep on
+        <em>.NET 10</em> to build and ship complete systems myself — not just the UI layer. Co-founder of a
+        9-person startup; completed a Master's on multimodal deepfake detection.
+      </p>
+    </div>
+  </div>
+  <div class="home-page__cards">
+    <app-action-card
+      label="→ PRIMARY"
+      heading="Curriculum Vitae"
+      description="Experience, skills and contact — chronological, ending at VOLO. Download as a formatted PDF."
+      [tags]="['React', 'Angular', '.NET 10', 'C#']"
+      variant="filled"
+      routerLink="/cv"
+    />
+    <app-action-card
+      label="→ WORK"
+      heading="Projects"
+      description="DigitalDustLibrary and the EU Deepfake Toolkit — a live thesis demo you can run."
+      meta="02 case studies"
+      variant="outlined"
+      routerLink="/projects"
+    />
+  </div>
+  <app-footer />
+</div>

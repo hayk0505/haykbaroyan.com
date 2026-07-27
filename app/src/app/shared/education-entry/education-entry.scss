@@ -1,0 +1,38 @@
+@use 'tokens' as *;
+
+:host {
+  display: block;
+}
+
+.education-entry {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 28px;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba($color-cream, 0.1);
+
+  &.education-entry--last {
+    border-bottom: none;
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+.education-entry__date {
+  font: 700 14px $font-label;
+  color: $color-chip;
+}
+
+.education-entry__title {
+  font: 700 17px $font-heading;
+  color: $color-cream;
+}
+
+.education-entry__institution {
+  font: 400 13px $font-body;
+  color: rgba($color-cream, 0.6);
+  margin-top: 5px;
+}

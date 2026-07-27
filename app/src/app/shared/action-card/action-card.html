@@ -1,0 +1,24 @@
+<a
+  class="action-card"
+  [class.action-card--filled]="variant() === 'filled'"
+  [class.action-card--outlined]="variant() === 'outlined'"
+  [routerLink]="routerLink()"
+>
+  <div>
+    <div class="action-card__top">
+      <span class="action-card__label">{{ label() }}</span>
+      <span class="action-card__icon">→</span>
+    </div>
+    <h2 class="action-card__heading">{{ heading() }}</h2>
+    <p class="action-card__description">{{ description() }}</p>
+  </div>
+  <div class="action-card__footer">
+    @if (tags().length) {
+      @for (tag of tags(); track tag) {
+        <app-tag-chip [label]="tag" variant="filled" />
+      }
+    } @else if (meta()) {
+      <span class="action-card__meta">{{ meta() }}</span>
+    }
+  </div>
+</a>

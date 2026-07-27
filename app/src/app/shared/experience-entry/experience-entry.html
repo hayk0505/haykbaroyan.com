@@ -1,0 +1,23 @@
+<div class="experience-entry" [class.experience-entry--last]="isLast()">
+  <div class="experience-entry__date">
+    <div class="experience-entry__date-label">{{ dateLabel() }}</div>
+    @if (badge()) {
+      <div class="experience-entry__badge">{{ badge() }}</div>
+    }
+  </div>
+  <div class="experience-entry__body">
+    <div class="experience-entry__heading-row">
+      <h3 class="experience-entry__company">{{ company() }}</h3>
+      @if (companyLinkHref()) {
+        <a class="experience-entry__company-link" [href]="companyLinkHref()" target="_blank" rel="noopener">{{ companyLinkLabel() }}</a>
+      }
+    </div>
+    <div class="experience-entry__role">{{ role() }}</div>
+    <p class="experience-entry__description" [innerHTML]="description()"></p>
+    <div class="experience-entry__tags">
+      @for (tag of tags(); track tag) {
+        <app-tag-chip [label]="tag" variant="outlined" />
+      }
+    </div>
+  </div>
+</div>

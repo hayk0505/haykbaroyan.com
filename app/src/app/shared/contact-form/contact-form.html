@@ -1,0 +1,29 @@
+<form class="contact-form" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="contact-form__label">SEND A MESSAGE</div>
+  <label class="contact-form__field">
+    <span>NAME</span>
+    <input type="text" formControlName="name" />
+  </label>
+  <label class="contact-form__field">
+    <span>EMAIL</span>
+    <input type="email" formControlName="email" />
+  </label>
+  <label class="contact-form__field">
+    <span>MESSAGE</span>
+    <textarea rows="4" formControlName="message"></textarea>
+  </label>
+
+  <div class="contact-form__turnstile-placeholder">Turnstile verification widget — pending site key</div>
+
+  <button type="submit" [disabled]="form.invalid || status() === 'submitting'">
+    Send message
+    <span class="contact-form__submit-icon">→</span>
+  </button>
+
+  @if (status() === 'success') {
+    <p class="contact-form__status">✓ Thanks — I'll reply to your email soon.</p>
+  }
+  @if (status() === 'error') {
+    <p class="contact-form__status contact-form__status--error">Something went wrong. Please email me directly instead.</p>
+  }
+</form>

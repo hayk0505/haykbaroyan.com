@@ -1,0 +1,52 @@
+@use 'tokens' as *;
+
+// Shared by every top-level page (home, cv, projects, contact) to avoid
+// re-declaring the same shell/eyebrow/description/heading/hero-grid rules
+// with small, accidental drift between them.
+
+%page-shell {
+  max-width: $max-width-page;
+  margin: 0 auto;
+  background: $color-bg-surface;
+  color: $color-cream;
+  min-height: 100dvh;
+}
+
+%page-eyebrow {
+  font: 400 12px $font-label;
+  color: $color-accent;
+  letter-spacing: 0.14em;
+  margin-bottom: 22px;
+}
+
+%page-description {
+  margin: 0 0 8px;
+  font: 400 15px/1.62 $font-body;
+  color: rgba($color-cream, 0.74);
+}
+
+@mixin page-heading($size, $letter-spacing: -0.04em, $line-height: 0.9) {
+  margin: 0;
+  font: 700 #{$size}/#{$line-height} $font-heading;
+  letter-spacing: $letter-spacing;
+
+  @media (max-width: $breakpoint-mobile) {
+    font-size: clamp(42px, 13vw, 72px);
+  }
+}
+
+@mixin hero-grid($aside-width) {
+  display: grid;
+  grid-template-columns: 1fr #{$aside-width};
+  gap: 44px;
+  align-items: end;
+
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    gap: 22px;
+  }
+}

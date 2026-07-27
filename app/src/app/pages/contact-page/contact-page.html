@@ -1,0 +1,40 @@
+<div class="contact-page">
+  <app-header-nav />
+
+  <div class="contact-page__intro">
+    <div class="contact-page__eyebrow">… / CONTACT</div>
+    <div class="contact-page__intro-grid">
+      <h1 class="contact-page__heading">Let's<br />talk<span class="contact-page__heading-dot">.</span></h1>
+      <p class="contact-page__description">Open to front-end and full-stack roles, freelance work, and collaboration. Drop a line and I'll get back to you.</p>
+    </div>
+  </div>
+
+  <div class="contact-page__body">
+    <div class="contact-page__direct">
+      <div class="contact-page__direct-label">DIRECT</div>
+      <a [href]="'mailto:' + contact.email" class="contact-page__direct-row">
+        <span>Email</span>
+        <span class="contact-page__direct-value">{{ contact.email }}</span>
+      </a>
+      <a [href]="'tel:' + contact.phone" class="contact-page__direct-row">
+        <span>Phone</span>
+        <span class="contact-page__direct-value">{{ contact.phoneDisplay }}</span>
+      </a>
+      <a [href]="contact.linkedin" target="_blank" rel="noopener" class="contact-page__direct-row">
+        <span>LinkedIn</span>
+        <span class="contact-page__direct-value">{{ contact.linkedinHandle }}</span>
+      </a>
+      <a [href]="contact.github" target="_blank" rel="noopener" class="contact-page__direct-row">
+        <span>GitHub</span>
+        <span class="contact-page__direct-value">{{ contact.githubHandle }}</span>
+      </a>
+      <div class="contact-page__direct-row contact-page__direct-row--last">
+        <span>Location</span>
+        <span class="contact-page__direct-value contact-page__direct-value--muted">{{ contact.location }}</span>
+      </div>
+    </div>
+    <app-contact-form />
+  </div>
+
+  <app-footer />
+</div>

@@ -1,0 +1,27 @@
+@use 'tokens' as *;
+
+:host {
+  display: inline-block;
+}
+
+.tag-chip {
+  display: inline-block;
+  font: 500 11px $font-label;
+  padding: 6px 12px;
+  border-radius: 18px;
+}
+
+.tag-chip--outlined {
+  border: 1px solid rgba($color-cream, 0.2);
+  color: $color-cream;
+}
+
+.tag-chip--filled {
+  background: $color-chip;
+  color: $color-ink;
+}
+
+.tag-chip--emphasized {
+  background: $color-ink;
+  color: $color-cream;
+}

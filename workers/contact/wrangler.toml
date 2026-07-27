@@ -1,0 +1,21 @@
+name = "haykbaroyan-contact"
+main = "src/index.ts"
+compatibility_date = "2026-07-26"
+
+# Zone-level route: Cloudflare intercepts requests matching this pattern
+# at the edge, before they ever reach the droplet (or anything else on
+# the zone). Everything else on haykbaroyan.com routes normally.
+[[routes]]
+pattern = "haykbaroyan.com/api/contact"
+zone_name = "haykbaroyan.com"
+
+# Plain vars — not secret, safe to commit. Just addresses.
+[vars]
+CONTACT_TO_EMAIL = "hayk@haykbaroyan.com"
+CONTACT_FROM_EMAIL = "contact@haykbaroyan.com"
+
+# Secrets — DO NOT put these here. Set once via:
+#   wrangler secret put TURNSTILE_SECRET_KEY
+#   wrangler secret put RESEND_API_KEY
+# For local dev, put them in a .dev.vars file instead (gitignored, see
+# .dev.vars.example in this folder for the expected shape).

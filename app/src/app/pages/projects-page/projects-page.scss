@@ -1,0 +1,42 @@
+@use 'tokens' as *;
+@use 'page-shell' as *;
+
+.projects-page {
+  @extend %page-shell;
+}
+
+.projects-page__intro {
+  padding: 56px 48px 44px;
+  border-bottom: 1px solid $color-border;
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: 36px 20px 32px;
+  }
+}
+
+.projects-page__eyebrow {
+  @extend %page-eyebrow;
+}
+
+.projects-page__intro-grid {
+  @include hero-grid(420px);
+}
+
+.projects-page__heading {
+  @include page-heading(76px);
+}
+
+.projects-page__description {
+  @extend %page-description;
+}
+
+.projects-page__list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 44px 48px 56px;
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: 28px 20px 40px;
+  }
+}

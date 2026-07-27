@@ -1,0 +1,76 @@
+@use 'tokens' as *;
+
+:host {
+  display: block;
+}
+
+.experience-entry {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 28px;
+  padding: 40px 0;
+  border-bottom: 1px solid rgba($color-cream, 0.1);
+
+  &.experience-entry--last {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+.experience-entry__date-label {
+  font: 700 15px $font-label;
+  color: $color-chip;
+}
+
+.experience-entry__badge {
+  font: 400 11px $font-label;
+  color: $color-accent;
+  margin-top: 10px;
+}
+
+.experience-entry__heading-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.experience-entry__company {
+  margin: 0;
+  font: 700 26px $font-heading;
+  color: $color-cream;
+}
+
+.experience-entry__company-link {
+  font: 400 12px $font-label;
+  color: rgba($color-cream, 0.5);
+}
+
+.experience-entry__role {
+  font: 500 14px $font-body;
+  color: $color-accent;
+  margin: 6px 0 14px;
+}
+
+.experience-entry__description {
+  margin: 0 0 18px;
+  font: 400 14.5px/1.62 $font-body;
+  color: rgba($color-cream, 0.74);
+  max-width: 640px;
+
+  strong {
+    color: $color-cream;
+  }
+}
+
+.experience-entry__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}

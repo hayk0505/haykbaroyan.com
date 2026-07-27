@@ -1,0 +1,18 @@
+@use 'tokens' as *;
+
+:host {
+  display: block;
+}
+
+.section-heading__title {
+  margin: 0;
+  font: 700 34px/0.95 $font-heading;
+  letter-spacing: -0.02em;
+  color: $color-cream;
+}
+
+.section-heading__caption {
+  font: 400 12px $font-label;
+  color: rgba($color-cream, 0.45);
+  margin-top: 10px;
+}

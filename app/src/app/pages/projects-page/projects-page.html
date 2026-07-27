@@ -1,0 +1,31 @@
+<div class="projects-page">
+  <app-header-nav />
+  <div class="projects-page__intro">
+    <div class="projects-page__eyebrow">… / PROJECTS — 02</div>
+    <div class="projects-page__intro-grid">
+      <h1 class="projects-page__heading">Projects</h1>
+      <p class="projects-page__description">
+        A closer look at what I build outside day-to-day client work — a full-stack multi-author publishing
+        platform I'm building from the ground up, and the deepfake-detection toolkit from my Master's research.
+      </p>
+    </div>
+  </div>
+  <div class="projects-page__list">
+    @for (project of projects; track project.heading) {
+      <app-project-card
+        [badgeLabel]="project.badgeLabel"
+        [heading]="project.heading"
+        [description]="project.description"
+        [tags]="project.tags"
+        [linkHref]="project.linkHref"
+        [routerLink]="project.routerLink"
+        [external]="project.external"
+        [imageSide]="project.imageSide"
+        [variant]="project.variant"
+        [screenshotCaption]="project.screenshotCaption"
+        [imageSrc]="project.imageSrc ?? ''"
+      />
+    }
+  </div>
+  <app-footer />
+</div>
