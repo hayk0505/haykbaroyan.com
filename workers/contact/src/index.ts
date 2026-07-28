@@ -67,8 +67,14 @@ async function verifyTurnstile(token: string, secret: string, remoteIp: string |
 			body: formData,
 		});
 
-		if (!res.ok) return false;
-		const outcome = (await res.json()) as { success?: boolean };
+		if (!res.ok) {
+			console.error('Turnstile siteverify HTTP error:', res.status);
+			return false;
+		}
+		const outcome = (await res.json()) as { success?: boolean; 'error-codes'?: string[] };
+		if (outcome.success !== true) {
+			console.error('Turnstile verification rejected:', outcome['error-codes']);
+		}
 		return outcome.success === true;
 	} catch (err) {
 		console.error('Turnstile verification request failed:', err);
