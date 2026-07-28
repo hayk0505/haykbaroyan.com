@@ -13,9 +13,9 @@
     <textarea rows="4" formControlName="message"></textarea>
   </label>
 
-  <div class="contact-form__turnstile-placeholder">Turnstile verification widget — pending site key</div>
+  <div class="contact-form__turnstile" #turnstileContainer></div>
 
-  <button type="submit" [disabled]="form.invalid || status() === 'submitting'">
+  <button type="submit" [disabled]="form.invalid || !turnstileToken() || status() === 'submitting'">
     Send message
     <span class="contact-form__submit-icon">→</span>
   </button>

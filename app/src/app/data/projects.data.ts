@@ -19,7 +19,7 @@ export const PROJECT_ENTRIES: ProjectEntry[] = [
     description:
       'A multi-author blog and magazine platform I designed and built end to end — covering tech, psychology, sociology and management. A real full-stack system: a SvelteKit public blog, a React admin panel with editorial review workflows, and a .NET 10 API behind both.',
     tags: ['SvelteKit', 'React', '.NET 10', 'PostgreSQL'],
-    linkHref: '#',
+    linkHref: 'https://github.com/hayk0505/DigitalDustLibrary',
     routerLink: '',
     external: true,
     imageSide: 'left',
@@ -28,14 +28,14 @@ export const PROJECT_ENTRIES: ProjectEntry[] = [
     imageSrc: '/assets/DDL-image.png',
   },
   {
-    badgeLabel: '02 · LIVE DEMO — CASE STUDY →',
+    badgeLabel: '02 · LIVE DEMO — CASE STUDY ↗',
     heading: 'EU Deepfake Toolkit',
     description:
       'A multimodal deepfake-detection toolkit developed as part of my Master’s thesis — analysing video, audio and image signals together to flag manipulated media. Includes a live, interactive demo you can run in the browser.',
     tags: ['AI/ML', 'Multimodal Detection', 'Research'],
-    linkHref: '',
-    routerLink: '/projects/eu-deepfake',
-    external: false,
+    linkHref: 'https://github.com/hayk0505/eu-deepfake-toolkit',
+    routerLink: '',
+    external: true,
     imageSide: 'right',
     variant: 'light',
     screenshotCaption: '[ screenshot — live detection demo ]',

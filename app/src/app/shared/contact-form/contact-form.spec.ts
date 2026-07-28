@@ -26,26 +26,44 @@ describe('ContactForm', () => {
     expect(button.disabled).toBe(true);
   });
 
-  it('enables the submit button once all fields are valid', () => {
+  it('keeps the submit button disabled when the form is valid but Turnstile has not verified yet', () => {
     component.form.setValue({ name: 'Jane', email: 'jane@example.com', message: 'Hello' });
+    fixture.detectChanges();
+    const button: HTMLButtonElement = fixture.nativeElement.querySelector('button[type="submit"]');
+    expect(button.disabled).toBe(true);
+  });
+
+  it('enables the submit button once the form is valid and Turnstile has verified', () => {
+    component.form.setValue({ name: 'Jane', email: 'jane@example.com', message: 'Hello' });
+    component.turnstileToken.set('test-token');
     fixture.detectChanges();
     const button: HTMLButtonElement = fixture.nativeElement.querySelector('button[type="submit"]');
     expect(button.disabled).toBe(false);
   });
 
-  it('POSTs the form value to /api/contact on submit', () => {
-    // NOTE: this asserts the form's CURRENT payload shape, not the Worker's expected one —
-    // workers/contact requires an additional turnstileToken field (see the TODO in
-    // contact-form.ts). Update this alongside that wiring, not before.
+  it('does not submit without a Turnstile token', () => {
     component.form.setValue({ name: 'Jane', email: 'jane@example.com', message: 'Hello' });
+    component.submit();
+    httpMock.expectNone('/api/contact');
+  });
+
+  it('POSTs the form value plus the Turnstile token to /api/contact on submit', () => {
+    component.form.setValue({ name: 'Jane', email: 'jane@example.com', message: 'Hello' });
+    component.turnstileToken.set('test-token');
     component.submit();
     const req = httpMock.expectOne('/api/contact');
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual({ name: 'Jane', email: 'jane@example.com', message: 'Hello' });
+    expect(req.request.body).toEqual({
+      name: 'Jane',
+      email: 'jane@example.com',
+      message: 'Hello',
+      turnstileToken: 'test-token',
+    });
     req.flush({});
   });
 
-  it('renders a labeled Turnstile placeholder', () => {
-    expect(fixture.nativeElement.textContent).toContain('Turnstile');
+  it('renders a container for the Turnstile widget to mount into', () => {
+    const container = fixture.nativeElement.querySelector('.contact-form__turnstile');
+    expect(container).withContext('expected a .contact-form__turnstile mount point').not.toBeNull();
   });
 });

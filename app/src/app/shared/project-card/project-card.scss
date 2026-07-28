@@ -48,10 +48,21 @@
   padding: 18px;
   font: 400 10.5px $font-label;
   color: rgba($color-cream, 0.5);
+  border-radius: 22px 0 0 22px;
+  overflow: hidden;
 
   @media (max-width: $breakpoint-mobile) {
     min-height: 150px;
     max-height: 170px;
+    border-radius: 22px 22px 0 0;
+  }
+}
+
+.project-card--image-right .project-card__image {
+  border-radius: 0 22px 22px 0;
+
+  @media (max-width: $breakpoint-mobile) {
+    border-radius: 0 0 22px 22px;
   }
 }
 

@@ -45,13 +45,10 @@
   }
 }
 
-.contact-form__turnstile-placeholder {
-  font: 400 12px $font-label;
-  color: rgba($color-ink, 0.5);
-  border: 1px dashed rgba($color-ink, 0.3);
-  border-radius: 8px;
-  padding: 12px;
-  text-align: center;
+.contact-form__turnstile {
+  // Reserves space for the widget iframe (~65px tall) so it doesn't cause layout shift
+  // once Turnstile finishes loading and renders into this container.
+  min-height: 65px;
 }
 
 button[type='submit'] {
