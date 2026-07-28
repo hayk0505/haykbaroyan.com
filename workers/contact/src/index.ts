@@ -103,7 +103,8 @@ async function sendViaResend(payload: ContactPayload, env: Env): Promise<boolean
 		});
 
 		if (!res.ok) {
-			console.error('Resend API error:', res.status);
+			const body = await res.text();
+			console.error('Resend API error:', res.status, body);
 			return false;
 		}
 		return true;
