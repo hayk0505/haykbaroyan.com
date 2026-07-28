@@ -16,6 +16,7 @@ declare global {
     turnstile?: {
       render: (container: string | HTMLElement, options: Record<string, unknown>) => string;
       remove: (widgetId: string) => void;
+      reset: (widgetId: string) => void;
     };
   }
 }
@@ -92,8 +93,23 @@ export class ContactForm implements OnDestroy {
     }
     this.status.set('submitting');
     this.http.post('/api/contact', { ...this.form.getRawValue(), turnstileToken: token }).subscribe({
-      next: () => this.status.set('success'),
-      error: () => this.status.set('error'),
+      next: () => {
+        this.status.set('success');
+        this.resetTurnstile();
+      },
+      error: () => {
+        this.status.set('error');
+        this.resetTurnstile();
+      },
     });
+  }
+
+  // Turnstile tokens are single-use and short-lived — every submit attempt (success or
+  // failure) needs a fresh one before the form can be submitted again.
+  private resetTurnstile(): void {
+    this.turnstileToken.set(null);
+    if (this.widgetId && window.turnstile) {
+      window.turnstile.reset(this.widgetId);
+    }
   }
 }
