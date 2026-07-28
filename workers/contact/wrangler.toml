@@ -11,7 +11,7 @@ zone_name = "haykbaroyan.com"
 
 # Plain vars — not secret, safe to commit. Just addresses.
 [vars]
-CONTACT_TO_EMAIL = "hayk@haykbaroyan.com"
+CONTACT_TO_EMAIL = "contact@haykbaroyan.com"
 CONTACT_FROM_EMAIL = "contact@haykbaroyan.com"
 
 # Secrets — DO NOT put these here. Set once via:
