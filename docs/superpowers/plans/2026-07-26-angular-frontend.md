@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build the Angular frontend for haykbaroyan.com — four prerendered static routes (`/`, `/cv`, `/projects`, `/contact`) faithfully converted from `design-reference/portfolio-mockup.html` (Tasks 1-18) and `Hayk Baroyan Portfolio_v2.html` (Tasks 19-30, adding the Contact page and a 720px responsive retrofit), with a working CV PDF download and a placeholder contact form. Tasks 31-32 redesign the `ProjectCard` component to match a newer reference, `Hayk Baroyan Portfolio_v3.html`.
+**Goal:** Build the Angular frontend for haykbaroyan.com — four prerendered static routes (`/`, `/cv`, `/projects`, `/contact`) faithfully converted from `design-reference/portfolio-mockup.html` (Tasks 1-18) and `Hayk Baroyan Portfolio_v2.html` (Tasks 19-30, adding the Contact page and a 720px responsive retrofit), with a working CV PDF download and a placeholder contact form. Tasks 31-32 redesign the `ProjectCard` component to match a newer reference, `Hayk Baroyan Portfolio_v3.html`. Task 33 redesigns `HeaderNav` to add a home-routing logo and a mobile burger/desktop-always-open nav pill.
 
 **Architecture:** Angular v20, standalone components, signal-based inputs (`input()`), `OnPush` change detection throughout. Content lives in typed data files, not templates. Routing is client-side (`provideRouter`) with all three routes additionally configured for build-time prerendering via `@angular/ssr` (no live Node server — output is static files). A small Node script generates the downloadable CV PDF from the same data files the CV page renders.
 
@@ -23,6 +23,7 @@
 - Testing: Angular CLI default (Karma + Jasmine). Unit tests cover the shared, input-driven components (`TagChip`, `ActionCard`, `ProjectCard`, `ExperienceEntry`, `EducationEntry`, `ContactForm`) and the route configuration. Pages get the CLI's default smoke test only — verified manually against the design reference otherwise. No e2e framework.
 - Out of scope: `/projects/eu-deepfake` page, `/api/contact` backend (including real Turnstile integration), Docker/Caddy/droplet/CI setup.
 - ProjectCard visual redesign (Tasks 31-32): sourced from `Hayk Baroyan Portfolio_v3.html` (repo root — same kind of self-contained bundled export as v2, open directly in a browser to view) via `docs/superpowers/specs/2026-07-29-project-card-redesign-design.md`. Adds `previewUrl`/`ctaLabel` fields and renames `badgeLabel` → `statusLabel` on `ProjectEntry`; swaps `imageSide` for both existing entries (DigitalDustLibrary left→right, EU Deepfake Toolkit right→left) to match the new reference's actual DOM order. No new shared design tokens — three one-off decorative colors (`#1a1915`, `#d3c6a9`, `#8a6f4a`) are scoped locally to `project-card.scss`. The CTA icon still derives from `external()` exactly as before (both entries render `↗`), not copied from the reference's placeholder-link icon.
+- HeaderNav logo + nav-pill redesign (Task 33): per `docs/superpowers/specs/2026-07-29-header-nav-redesign-design.md`. Adds `app/public/logo.svg` as a home-routing logo (same position on mobile/desktop); removes the text "Home" link; replaces the burger/links markup with a `.header-nav__nav-pill` that on mobile (`≤ $breakpoint-mobile`) shows only a burger button which expands the pill rightward on click (hamburger-to-X icon morph, absolutely-positioned expansion so it overlays rather than reflows other header content, no backdrop scrim), and on desktop is permanently expanded with no burger at all. No new design tokens.
 
 ---
 
@@ -5737,4 +5738,503 @@ Expected: no uncommitted changes. If Step 2 produced fixes, commit them now:
 ```bash
 git add app
 git commit -m "Fix visual discrepancies found in ProjectCard verification pass"
+```
+
+---
+
+### Task 33: `HeaderNav` — logo + mobile burger / desktop-always-open nav pill
+
+**Files:**
+- Modify: `app/src/app/shared/header-nav/header-nav.html`
+- Modify: `app/src/app/shared/header-nav/header-nav.scss`
+- Test: `app/src/app/shared/header-nav/header-nav.spec.ts`
+- Commit (untracked, pre-existing in the working tree): `app/public/logo.svg`
+
+**Interfaces:**
+- Consumes: `HeaderNav`'s existing `mobileMenuOpen` signal, `toggleMenu()`, `closeMenu()` (all in `header-nav.ts` — **no changes to that file in this task**), and `CONTACT` data (unchanged).
+- Produces: no new component inputs/outputs — this task only changes the template and styles. New CSS class surface other code shouldn't depend on: `.header-nav__left`, `.header-nav__logo`, `.header-nav__logo-img`, `.header-nav__nav-pill`, `.header-nav__nav-pill--open` (replaces the old `.header-nav__links--open`), `.header-nav__burger-line--top/--mid/--bottom`. Removed: `.header-nav__backdrop`, `.header-nav__container` (renamed to `.header-nav__left`, see below), `.header-nav__links--open`, the "Home" text link.
+
+**Before you start:** `header-nav.html` and `header-nav.scss` already have *uncommitted* changes sitting in the working tree (not from this plan — the human partner was experimenting directly). Read both files fresh before writing your diff; the content below assumes their *current* state, not their last-committed state. If what you read differs from what's quoted below, treat what's actually in the working tree as ground truth and adapt — but flag the discrepancy in your report.
+
+- [ ] **Step 1: Write the failing test**
+
+Replace the full contents of `app/src/app/shared/header-nav/header-nav.spec.ts`:
+
+```typescript
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
+import { Component } from '@angular/core';
+import { HeaderNav } from './header-nav';
+
+@Component({ selector: 'app-stub', template: '<app-header-nav />', imports: [HeaderNav] })
+class HostStub {}
+
+describe('HeaderNav', () => {
+  it('marks the CV link active when on /cv', async () => {
+    TestBed.configureTestingModule({
+      providers: [provideRouter([{ path: 'cv', component: HostStub }])],
+    });
+    const harness = await RouterTestingHarness.create();
+    await harness.navigateByUrl('/cv', HostStub);
+    harness.detectChanges();
+    const cvLink = harness.routeNativeElement!.querySelector('a[routerLink="/cv"]');
+    expect(cvLink!.classList.contains('header-nav__link--active')).toBe(true);
+  });
+
+  it('marks the Contact link active when on /contact', async () => {
+    TestBed.configureTestingModule({
+      providers: [provideRouter([{ path: 'contact', component: HostStub }])],
+    });
+    const harness = await RouterTestingHarness.create();
+    await harness.navigateByUrl('/contact', HostStub);
+    harness.detectChanges();
+    const contactLink = harness.routeNativeElement!.querySelector('a[routerLink="/contact"]');
+    expect(contactLink!.classList.contains('header-nav__link--active')).toBe(true);
+  });
+
+  it('renders the email pill and GitHub link', async () => {
+    TestBed.configureTestingModule({ imports: [HeaderNav], providers: [provideRouter([])] });
+    const fixture: ComponentFixture<HeaderNav> = TestBed.createComponent(HeaderNav);
+    fixture.detectChanges();
+    const html = fixture.nativeElement.innerHTML as string;
+    expect(html).toContain('mailto:haykbaroyan@yahoo.com');
+    expect(html).toContain('https://github.com/hayk0505');
+  });
+
+  it('renders a download link to the CV PDF asset', () => {
+    TestBed.configureTestingModule({ imports: [HeaderNav], providers: [provideRouter([])] });
+    const fixture: ComponentFixture<HeaderNav> = TestBed.createComponent(HeaderNav);
+    fixture.detectChanges();
+    const link: HTMLAnchorElement = fixture.nativeElement.querySelector('a[download]');
+    expect(link.getAttribute('href')).toBe('/assets/Hayk-Baroyan-CV.pdf');
+  });
+
+  it('renders the logo as the home link instead of a text "Home" link', () => {
+    TestBed.configureTestingModule({ imports: [HeaderNav], providers: [provideRouter([])] });
+    const fixture: ComponentFixture<HeaderNav> = TestBed.createComponent(HeaderNav);
+    fixture.detectChanges();
+    const homeLink: HTMLAnchorElement = fixture.nativeElement.querySelector('a[routerLink="/"]');
+    expect(homeLink.classList.contains('header-nav__logo')).toBe(true);
+    expect(homeLink.querySelector('img')?.getAttribute('src')).toBe('/logo.svg');
+    expect(fixture.nativeElement.textContent).not.toContain('Home');
+  });
+
+  it('toggles the nav pill open when the burger button is clicked', () => {
+    TestBed.configureTestingModule({ imports: [HeaderNav], providers: [provideRouter([])] });
+    const fixture: ComponentFixture<HeaderNav> = TestBed.createComponent(HeaderNav);
+    fixture.detectChanges();
+    const burger: HTMLButtonElement = fixture.nativeElement.querySelector('.header-nav__burger');
+    const pill: HTMLElement = fixture.nativeElement.querySelector('.header-nav__nav-pill');
+    expect(pill.classList.contains('header-nav__nav-pill--open')).toBe(false);
+
+    burger.click();
+    fixture.detectChanges();
+    expect(pill.classList.contains('header-nav__nav-pill--open')).toBe(true);
+    expect(burger.getAttribute('aria-expanded')).toBe('true');
+  });
+
+  it('closes the mobile menu when a nav link is clicked', () => {
+    TestBed.configureTestingModule({ imports: [HeaderNav], providers: [provideRouter([])] });
+    const fixture: ComponentFixture<HeaderNav> = TestBed.createComponent(HeaderNav);
+    fixture.detectChanges();
+    const burger: HTMLButtonElement = fixture.nativeElement.querySelector('.header-nav__burger');
+    burger.click();
+    fixture.detectChanges();
+
+    const cvLink: HTMLAnchorElement = fixture.nativeElement.querySelector('a[routerLink="/cv"]');
+    cvLink.click();
+    fixture.detectChanges();
+
+    const pill: HTMLElement = fixture.nativeElement.querySelector('.header-nav__nav-pill');
+    expect(pill.classList.contains('header-nav__nav-pill--open')).toBe(false);
+  });
+});
+```
+
+- [ ] **Step 2: Run it to verify it fails**
+
+```bash
+cd app
+npm test -- --watch=false --browsers=ChromeHeadless --include=**/header-nav.spec.ts
+```
+
+Expected: FAIL — `.header-nav__logo`, `.header-nav__nav-pill`, `.header-nav__nav-pill--open` don't exist in the current template; the "closes on nav link click" test's `a[routerLink="/cv"]` selector already exists today so that part alone wouldn't fail, but the pill-class assertions will.
+
+- [ ] **Step 3: Implement `header-nav.html`**
+
+Replace the full contents:
+
+```html
+<header class="header-nav">
+  <div class="header-nav__left">
+    <a routerLink="/" class="header-nav__logo" aria-label="Home">
+      <img src="/logo.svg" alt="" class="header-nav__logo-img" />
+    </a>
+    <div class="header-nav__nav-pill" [class.header-nav__nav-pill--open]="mobileMenuOpen()">
+      <button
+        type="button"
+        class="header-nav__burger"
+        (click)="toggleMenu()"
+        [attr.aria-expanded]="mobileMenuOpen()"
+        aria-label="Toggle navigation menu"
+      >
+        <span class="header-nav__burger-line header-nav__burger-line--top"></span>
+        <span class="header-nav__burger-line header-nav__burger-line--mid"></span>
+        <span class="header-nav__burger-line header-nav__burger-line--bottom"></span>
+      </button>
+      <nav class="header-nav__links">
+        <a routerLink="/cv" routerLinkActive="header-nav__link--active" class="header-nav__link" (click)="closeMenu()">CV</a>
+        <a routerLink="/projects" routerLinkActive="header-nav__link--active" class="header-nav__link" (click)="closeMenu()">Projects</a>
+        <a routerLink="/contact" routerLinkActive="header-nav__link--active" class="header-nav__link" (click)="closeMenu()">Contact</a>
+      </nav>
+    </div>
+  </div>
+  <div class="header-nav__buttons">
+    <a [href]="'mailto:' + contact.email" class="header-nav__pill" aria-label="Email">
+      <svg class="header-nav__pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="5" width="18" height="14" rx="2" />
+        <path d="M3 7l9 6 9-6" />
+      </svg>
+      <span class="header-nav__pill-label">Email</span>
+    </a>
+    <a [href]="contact.linkedin" target="_blank" rel="noopener" class="header-nav__pill" aria-label="LinkedIn">
+      <svg class="header-nav__pill-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.5 8h4v15h-4V8zM8.5 8h3.83v2.05h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.77 2.43 4.77 5.93V23h-4v-8.1c0-1.93-.03-4.42-2.69-4.42-2.7 0-3.11 2.11-3.11 4.28V23h-4V8z" />
+      </svg>
+      <span class="header-nav__pill-label">LinkedIn</span>
+    </a>
+    <a [href]="contact.github" target="_blank" rel="noopener" class="header-nav__pill" aria-label="GitHub">
+      <svg class="header-nav__pill-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.8.1-.8.1-.8 1.3.1 2 1.3 2 1.3 1.1 2 3 1.4 3.7 1.1.1-.8.4-1.4.8-1.7-2.7-.3-5.5-1.3-5.5-6a4.6 4.6 0 0 1 1.2-3.2 4.3 4.3 0 0 1 .1-3.2s1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2a4.3 4.3 0 0 1 .1 3.2 4.6 4.6 0 0 1 1.2 3.2c0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z" />
+      </svg>
+      <span class="header-nav__pill-label">GitHub</span>
+    </a>
+    <a href="/assets/Hayk-Baroyan-CV.pdf" download class="header-nav__download">
+      Download CV
+      <span class="header-nav__download-icon">↓</span>
+    </a>
+  </div>
+</header>
+```
+
+- [ ] **Step 4: Implement `header-nav.scss`**
+
+Replace the full contents:
+
+```scss
+@use 'tokens' as *;
+
+:host {
+  display: block;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 48px;
+  border-bottom: 1px solid $color-border;
+  position: sticky;
+  top: 0;
+  background: $color-bg-surface;
+  z-index: 5;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: 16px 20px;
+    gap: 12px;
+  }
+}
+
+.header-nav__left {
+  display: flex;
+  align-items: center;
+}
+
+.header-nav__logo {
+  display: flex;
+  margin-right: 14px;
+}
+
+.header-nav__logo-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: block;
+}
+
+.header-nav__nav-pill {
+  display: inline-flex;
+  align-items: center;
+
+  @media (max-width: $breakpoint-mobile) {
+    position: relative;
+  }
+}
+
+.header-nav__burger {
+  display: none;
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid rgba($color-cream, 0.22);
+  border-radius: 50%;
+  background: $color-bg-surface-alt;
+  cursor: pointer;
+  transition: border-radius 0.2s ease;
+
+  @media (max-width: $breakpoint-mobile) {
+    display: flex;
+  }
+}
+
+.header-nav__nav-pill--open .header-nav__burger {
+  @media (max-width: $breakpoint-mobile) {
+    border-radius: 22px 0 0 22px;
+  }
+}
+
+.header-nav__burger-line {
+  display: block;
+  width: 16px;
+  height: 2px;
+  background: $color-cream;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.header-nav__nav-pill--open .header-nav__burger-line--top {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.header-nav__nav-pill--open .header-nav__burger-line--mid {
+  opacity: 0;
+}
+
+.header-nav__nav-pill--open .header-nav__burger-line--bottom {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.header-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 12px 26px;
+  background: $color-bg-surface-alt;
+  border: 1px solid rgba($color-cream, 0.22);
+  border-radius: 22px;
+  font: 400 13px $font-label;
+  color: rgba($color-cream, 0.7);
+
+  @media (max-width: $breakpoint-mobile) {
+    position: absolute;
+    left: 44px;
+    top: 0;
+    height: 44px;
+    gap: 20px;
+    padding: 0 20px 0 12px;
+    white-space: nowrap;
+    border-left: none;
+    border-radius: 0 22px 22px 0;
+    opacity: 0;
+    max-width: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 20;
+    transition: max-width 0.25s ease, opacity 0.2s ease;
+  }
+}
+
+.header-nav__nav-pill--open .header-nav__links {
+  @media (max-width: $breakpoint-mobile) {
+    opacity: 1;
+    max-width: 320px;
+    pointer-events: auto;
+  }
+}
+
+.header-nav__link {
+  padding: 2px 12px;
+
+  &:hover {
+    background: rgba($color-cream, 0.06);
+  }
+}
+
+.header-nav__link--active {
+  color: $color-cream;
+}
+
+.header-nav__buttons {
+  position: relative;
+  z-index: 11;
+  display: flex;
+  gap: 10px;
+
+  @media (max-width: $breakpoint-mobile) {
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}
+
+.header-nav__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 400 11px $font-label;
+  padding: 8px 14px;
+  border: 1px solid rgba($color-cream, 0.22);
+  border-radius: 22px;
+  color: $color-cream;
+  transition: transform 0.15s ease;
+
+  &:hover {
+    border-color: rgba($color-cream, 0.9);
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+  }
+}
+
+.header-nav__pill-icon {
+  display: none;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+
+  @media (max-width: $breakpoint-mobile) {
+    display: block;
+  }
+}
+
+.header-nav__pill-label {
+  @media (max-width: $breakpoint-mobile) {
+    display: none;
+  }
+}
+
+.header-nav__download {
+  border: 2px solid rgba(#8a6f4a, 0.8);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: $color-cream;
+  color: $color-ink;
+  border-radius: 22px;
+  padding: 8px 8px 8px 14px;
+  font: 700 11px $font-label;
+  white-space: nowrap;
+  transition: transform 0.15s ease;
+
+  &:hover {
+    border-color: rgba($color-cream, 0.1);
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    height: 32px;
+    padding: 0 6px 0 12px;
+    font-size: 10px;
+    gap: 6px;
+  }
+}
+
+.header-nav__download-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: $color-ink;
+  color: $color-cream;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+
+  @media (max-width: $breakpoint-mobile) {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+}
+```
+
+- [ ] **Step 5: Run the test to verify it passes**
+
+```bash
+cd app
+npm test -- --watch=false --browsers=ChromeHeadless --include=**/header-nav.spec.ts
+```
+
+Expected: PASS (7 specs).
+
+- [ ] **Step 6: Run the full test suite**
+
+```bash
+cd app
+npm test -- --watch=false --browsers=ChromeHeadless
+```
+
+Expected: all specs PASS, zero failures.
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add app/src/app/shared/header-nav app/public/logo.svg
+git commit -m "Redesign HeaderNav with a logo and a mobile burger / desktop always-open nav pill"
+```
+
+---
+
+### Task 34: Final verification pass for the `HeaderNav` redesign
+
+**Files:** none (verification only)
+
+- [ ] **Step 1: Full production build**
+
+```bash
+cd app
+npm run build
+```
+
+Expected: succeeds with no errors or warnings.
+
+- [ ] **Step 2: Serve the prerendered output locally and check desktop first**
+
+```bash
+npx http-server app/dist/app/browser -p 8080
+```
+
+Open `http://localhost:8080/` at a desktop width (≥900px window). Confirm: the logo renders to the left of the nav links and routes to `/` when clicked; no "Home" text link remains; CV/Projects/Contact render inline in one permanently-visible rounded pill with no burger button visible anywhere; the Email/LinkedIn/GitHub pills and Download CV button are unchanged on the right.
+
+- [ ] **Step 3: Resize the browser below 720px and check the mobile burger interaction**
+
+Confirm: only a small circular burger button shows next to the logo (no links visible); clicking it smoothly expands a pill to its right revealing CV/Projects/Contact in one inline row, with the burger's three lines animating into an X; the expansion overlays on top of the page rather than pushing the logo or the right-side contact buttons out of place; clicking the burger again (or a link) closes it smoothly, with the X animating back into three lines; no dimming backdrop appears at any point.
+
+- [ ] **Step 4: Click through real navigation on both desktop and mobile widths**
+
+Confirm CV/Projects/Contact all navigate correctly and their `--active` state highlights appropriately; confirm the logo click navigates home from every route.
+
+- [ ] **Step 5: Stop the local server, then confirm a clean git state**
+
+```bash
+git status
+```
+
+Expected: no uncommitted changes. If Steps 2-4 produced fixes, commit them now:
+
+```bash
+git add app
+git commit -m "Fix visual discrepancies found in HeaderNav verification pass"
 ```
