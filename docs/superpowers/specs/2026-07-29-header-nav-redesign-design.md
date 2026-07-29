@@ -82,15 +82,25 @@ Removed entirely: the `@if (mobileMenuOpen()) { <div class="header-nav__backdrop
 
 (The 7px translate is derived from the existing 32px-tall burger's 3 lines at 2px height with 5px gaps, adjusted for the new 44px circular button — tune the exact value during implementation so the two rotated lines visually cross at the button's center; it does not need to be pixel-exact to this spec.)
 
-## Desktop behavior (`> $breakpoint-mobile`)
+## Desktop behavior (base rules, no media query) and mobile override
 
-Override block (inside the existing `@media` pattern, mirroring how other components in this codebase structure their responsive rules — but here the *un-prefixed* rule is mobile-first-collapsed and desktop is the override, since mobile is the more complex state):
+Matching this codebase's existing convention everywhere else (base rules target desktop; `@media (max-width: $breakpoint-mobile)` blocks add mobile-specific overrides), desktop is the *base* styling here, and all of the mobile-only pill/burger mechanics from the previous section live inside `@media (max-width: $breakpoint-mobile)` overrides:
 
-- `.header-nav__burger { display: none; }`
-- `.header-nav__nav-pill` no longer needs `position: relative` behavior for overlay purposes, but leaving it doesn't hurt — simplest is to leave the container rule alone and just override the two children.
-- `.header-nav__links` resets to a normal, permanently-visible pill: `position: static; opacity: 1; max-width: none; overflow: visible; pointer-events: auto; height: auto; display: flex; align-items: center; gap: 28px; padding: 12px 26px; background: $color-bg-surface-alt; border: 1px solid rgba($color-cream, 0.22); border-radius: 22px;`
+**Base (desktop):**
+- `.header-nav__burger { display: none; }` — no burger at all above the breakpoint.
+- `.header-nav__links`: permanently visible pill — `display: flex; align-items: center; gap: 28px; padding: 12px 26px; background: $color-bg-surface-alt; border: 1px solid rgba($color-cream, 0.22); border-radius: 22px;` (no `position`, `opacity`, `max-width`, or `pointer-events` overrides needed at all — those only exist inside the mobile block below).
+- `.header-nav__nav-pill { display: inline-flex; align-items: center; }`
 
-This produces the "same design, without burger menu, just open always" requirement — same background/border/radius language as the mobile-open state, permanently shown, no burger.
+**Mobile override (`@media (max-width: $breakpoint-mobile)`):**
+- `.header-nav__nav-pill { position: relative; }`
+- `.header-nav__burger { display: flex; ... }` (all of the 44×44 circular-button styling from the previous section)
+- `.header-nav__links { position: absolute; left: 44px; top: 0; height: 44px; opacity: 0; max-width: 0; overflow: hidden; pointer-events: none; z-index: 20; transition: max-width 0.25s ease, opacity 0.2s ease; border-left: none; border-radius: 0 22px 22px 0; padding: 0 20px 0 12px; gap: 20px; }` (background/border color values stay the same as desktop's).
+- `.header-nav__nav-pill--open .header-nav__burger { border-radius: 22px 0 0 22px; }`
+- `.header-nav__nav-pill--open .header-nav__links { opacity: 1; max-width: 320px; pointer-events: auto; }`
+
+The burger-line default styles and their `--open` transform rules (from the previous section) apply unscoped by any media query — harmless, since `.header-nav__burger`'s own `display: none` at desktop already makes its children's styling irrelevant there.
+
+This produces the "same design, without burger menu, just open always" requirement on desktop — same background/border/radius language the mobile pill uses when open, permanently shown, no burger.
 
 ## Logo
 
