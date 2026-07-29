@@ -31,10 +31,11 @@ The existing contact-pill class is `.header-nav__pill` (singular, one per contac
 
 ```html
 <header class="header-nav">
-  <a routerLink="/" class="header-nav__logo" aria-label="Home">
-    <img src="/logo.svg" alt="" class="header-nav__logo-img" />
-  </a>
-  <div class="header-nav__nav-pill" [class.header-nav__nav-pill--open]="mobileMenuOpen()">
+  <div class="header-nav__left">
+    <a routerLink="/" class="header-nav__logo" aria-label="Home">
+      <img src="/logo.svg" alt="" class="header-nav__logo-img" />
+    </a>
+    <div class="header-nav__nav-pill" [class.header-nav__nav-pill--open]="mobileMenuOpen()">
     <button
       type="button"
       class="header-nav__burger"
@@ -51,6 +52,7 @@ The existing contact-pill class is `.header-nav__pill` (singular, one per contac
       <a routerLink="/projects" routerLinkActive="header-nav__link--active" class="header-nav__link" (click)="closeMenu()">Projects</a>
       <a routerLink="/contact" routerLinkActive="header-nav__link--active" class="header-nav__link" (click)="closeMenu()">Contact</a>
     </nav>
+    </div>
   </div>
   <div class="header-nav__buttons">
     <!-- unchanged: Email / LinkedIn / GitHub pills + Download CV button -->
@@ -58,7 +60,9 @@ The existing contact-pill class is `.header-nav__pill` (singular, one per contac
 </header>
 ```
 
-Removed entirely: the `@if (mobileMenuOpen()) { <div class="header-nav__backdrop" ...> }` block, the `header-nav__container` wrapper div (no longer needed — the burger and links are both direct children of `.header-nav__nav-pill` now), and the `[routerLinkActiveOptions]="{ exact: true }"` Home link.
+`.header-nav` ends up with exactly two direct children — `.header-nav__left` (logo + nav-pill) and `.header-nav__buttons` — so its existing `justify-content: space-between` keeps working exactly as it does today. This replaces the old `.header-nav__container` (which only wrapped burger+links); the new `.header-nav__left` wraps the logo too, one level further out.
+
+Removed entirely: the `@if (mobileMenuOpen()) { <div class="header-nav__backdrop" ...> }` block, and the `[routerLinkActiveOptions]="{ exact: true }"` Home link (link itself removed, not just the attribute).
 
 `header-nav.ts` needs no changes at all — `mobileMenuOpen` signal, `toggleMenu()`, `closeMenu()` keep their exact current names/behavior, just applied to the new markup and the renamed `--open` modifier target (`.header-nav__nav-pill--open` instead of `.header-nav__links--open`).
 
@@ -122,9 +126,10 @@ Same rule at both breakpoints — no media query needed, matching "logo must be 
 
 ## `header-nav.scss` structural changes
 
-- Delete `.header-nav__backdrop` and `.header-nav__container` rules entirely (elements removed from the template).
-- Delete the current `.header-nav__links` / `.header-nav__links--open` rules and `.header-nav__burger` / `.header-nav__burger-line` rules; replace with the mobile-default + desktop-override rules above (`.header-nav__link` and `.header-nav__link--active` — the individual link styling — are kept, adjusted only for padding/sizing to fit the new pill, no behavioral change).
-- `.header-nav` (outer flex row) keeps its existing `display: flex; align-items: center; justify-content: space-between;`. With `.header-nav__container` removed, `.header-nav__logo` and `.header-nav__nav-pill` become two adjacent direct children of `.header-nav` (in that order), followed by `.header-nav__buttons` as the third child — `justify-content: space-between` then naturally groups the first two on the left and pushes `.header-nav__buttons` to the right, matching today's layout split.
+- Delete `.header-nav__backdrop` entirely (element removed from the template).
+- Repurpose `.header-nav__container`'s rule (currently just `display: flex;`) as `.header-nav__left`'s rule — same `display: flex; align-items: center;` — now wrapping the logo + nav-pill instead of just the burger + links.
+- Delete the current `.header-nav__links` / `.header-nav__links--open` rules and `.header-nav__burger` / `.header-nav__burger-line` rules; replace with the desktop-base + mobile-override rules above (`.header-nav__link--active` is kept as-is; `.header-nav__link` itself needs a small hover treatment now that it's no longer nested inside the old `.header-nav__links` rule — carry forward the existing `padding: 2px 12px` + `&:hover { background: rgba($color-cream, 0.06); }` treatment as `.header-nav__link`'s own top-level rule).
+- `.header-nav` (outer flex row) keeps its existing `display: flex; align-items: center; justify-content: space-between;` — unchanged, since it still has exactly two direct children (`.header-nav__left`, `.header-nav__buttons`), same as before.
 
 ## Testing (`header-nav.spec.ts`)
 
