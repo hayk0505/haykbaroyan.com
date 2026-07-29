@@ -47,17 +47,27 @@ describe('HeaderNav', () => {
     expect(link.getAttribute('href')).toBe('/assets/Hayk-Baroyan-CV.pdf');
   });
 
-  it('toggles the mobile menu open when the burger button is clicked', () => {
+  it('renders the logo as the home link instead of a text "Home" link', () => {
+    TestBed.configureTestingModule({ imports: [HeaderNav], providers: [provideRouter([])] });
+    const fixture: ComponentFixture<HeaderNav> = TestBed.createComponent(HeaderNav);
+    fixture.detectChanges();
+    const homeLink: HTMLAnchorElement = fixture.nativeElement.querySelector('a[routerLink="/"]');
+    expect(homeLink.classList.contains('header-nav__logo')).toBe(true);
+    expect(homeLink.querySelector('img')?.getAttribute('src')).toBe('/logo.svg');
+    expect(fixture.nativeElement.textContent).not.toContain('Home');
+  });
+
+  it('toggles the nav pill open when the burger button is clicked', () => {
     TestBed.configureTestingModule({ imports: [HeaderNav], providers: [provideRouter([])] });
     const fixture: ComponentFixture<HeaderNav> = TestBed.createComponent(HeaderNav);
     fixture.detectChanges();
     const burger: HTMLButtonElement = fixture.nativeElement.querySelector('.header-nav__burger');
-    const nav: HTMLElement = fixture.nativeElement.querySelector('.header-nav__links');
-    expect(nav.classList.contains('header-nav__links--open')).toBe(false);
+    const pill: HTMLElement = fixture.nativeElement.querySelector('.header-nav__nav-pill');
+    expect(pill.classList.contains('header-nav__nav-pill--open')).toBe(false);
 
     burger.click();
     fixture.detectChanges();
-    expect(nav.classList.contains('header-nav__links--open')).toBe(true);
+    expect(pill.classList.contains('header-nav__nav-pill--open')).toBe(true);
     expect(burger.getAttribute('aria-expanded')).toBe('true');
   });
 
@@ -69,36 +79,11 @@ describe('HeaderNav', () => {
     burger.click();
     fixture.detectChanges();
 
-    const homeLink: HTMLAnchorElement = fixture.nativeElement.querySelector('a[routerLink="/"]');
-    homeLink.click();
+    const cvLink: HTMLAnchorElement = fixture.nativeElement.querySelector('a[routerLink="/cv"]');
+    cvLink.click();
     fixture.detectChanges();
 
-    const nav: HTMLElement = fixture.nativeElement.querySelector('.header-nav__links');
-    expect(nav.classList.contains('header-nav__links--open')).toBe(false);
-  });
-
-  it('renders no backdrop when the menu is closed', () => {
-    TestBed.configureTestingModule({ imports: [HeaderNav], providers: [provideRouter([])] });
-    const fixture: ComponentFixture<HeaderNav> = TestBed.createComponent(HeaderNav);
-    fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('.header-nav__backdrop')).toBeNull();
-  });
-
-  it('closes the mobile menu when the backdrop is clicked', () => {
-    TestBed.configureTestingModule({ imports: [HeaderNav], providers: [provideRouter([])] });
-    const fixture: ComponentFixture<HeaderNav> = TestBed.createComponent(HeaderNav);
-    fixture.detectChanges();
-    const burger: HTMLButtonElement = fixture.nativeElement.querySelector('.header-nav__burger');
-    burger.click();
-    fixture.detectChanges();
-
-    const backdrop: HTMLElement = fixture.nativeElement.querySelector('.header-nav__backdrop');
-    expect(backdrop).not.toBeNull();
-    backdrop.click();
-    fixture.detectChanges();
-
-    const nav: HTMLElement = fixture.nativeElement.querySelector('.header-nav__links');
-    expect(nav.classList.contains('header-nav__links--open')).toBe(false);
-    expect(fixture.nativeElement.querySelector('.header-nav__backdrop')).toBeNull();
+    const pill: HTMLElement = fixture.nativeElement.querySelector('.header-nav__nav-pill');
+    expect(pill.classList.contains('header-nav__nav-pill--open')).toBe(false);
   });
 });

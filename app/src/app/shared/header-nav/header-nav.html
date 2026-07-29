@@ -1,24 +1,27 @@
 <header class="header-nav">
-  @if (mobileMenuOpen()) {
-    <div class="header-nav__backdrop" (click)="closeMenu()"></div>
-  }
-  <nav class="header-nav__links" [class.header-nav__links--open]="mobileMenuOpen()">
-    <a routerLink="/" routerLinkActive="header-nav__link--active" [routerLinkActiveOptions]="{ exact: true }" class="header-nav__link" (click)="closeMenu()">Home</a>
-    <a routerLink="/cv" routerLinkActive="header-nav__link--active" class="header-nav__link" (click)="closeMenu()">CV</a>
-    <a routerLink="/projects" routerLinkActive="header-nav__link--active" class="header-nav__link" (click)="closeMenu()">Projects</a>
-    <a routerLink="/contact" routerLinkActive="header-nav__link--active" class="header-nav__link" (click)="closeMenu()">Contact</a>
-  </nav>
-  <button
-    type="button"
-    class="header-nav__burger"
-    (click)="toggleMenu()"
-    [attr.aria-expanded]="mobileMenuOpen()"
-    aria-label="Toggle navigation menu"
-  >
-    <span class="header-nav__burger-line"></span>
-    <span class="header-nav__burger-line"></span>
-    <span class="header-nav__burger-line"></span>
-  </button>
+  <div class="header-nav__left">
+    <a routerLink="/" class="header-nav__logo" aria-label="Home">
+      <img src="/logo.svg" alt="" class="header-nav__logo-img" />
+    </a>
+    <div class="header-nav__nav-pill" [class.header-nav__nav-pill--open]="mobileMenuOpen()">
+      <button
+        type="button"
+        class="header-nav__burger"
+        (click)="toggleMenu()"
+        [attr.aria-expanded]="mobileMenuOpen()"
+        aria-label="Toggle navigation menu"
+      >
+        <span class="header-nav__burger-line header-nav__burger-line--top"></span>
+        <span class="header-nav__burger-line header-nav__burger-line--mid"></span>
+        <span class="header-nav__burger-line header-nav__burger-line--bottom"></span>
+      </button>
+      <nav class="header-nav__links">
+        <a routerLink="/cv" routerLinkActive="header-nav__link--active" class="header-nav__link" (click)="closeMenu()">CV</a>
+        <a routerLink="/projects" routerLinkActive="header-nav__link--active" class="header-nav__link" (click)="closeMenu()">Projects</a>
+        <a routerLink="/contact" routerLinkActive="header-nav__link--active" class="header-nav__link" (click)="closeMenu()">Contact</a>
+      </nav>
+    </div>
+  </div>
   <div class="header-nav__buttons">
     <a [href]="'mailto:' + contact.email" class="header-nav__pill" aria-label="Email">
       <svg class="header-nav__pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">

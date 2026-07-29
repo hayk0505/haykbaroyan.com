@@ -62,6 +62,24 @@ describe('ContactForm', () => {
     req.flush({});
   });
 
+  it('resets the form fields after a successful submit', () => {
+    component.form.setValue({ name: 'Jane', email: 'jane@example.com', message: 'Hello' });
+    component.turnstileToken.set('test-token');
+    component.submit();
+    const req = httpMock.expectOne('/api/contact');
+    req.flush({});
+    expect(component.form.value).toEqual({ name: '', email: '', message: '' });
+  });
+
+  it('does not reset the form fields after a failed submit', () => {
+    component.form.setValue({ name: 'Jane', email: 'jane@example.com', message: 'Hello' });
+    component.turnstileToken.set('test-token');
+    component.submit();
+    const req = httpMock.expectOne('/api/contact');
+    req.flush('error', { status: 500, statusText: 'Server Error' });
+    expect(component.form.value).toEqual({ name: 'Jane', email: 'jane@example.com', message: 'Hello' });
+  });
+
   it('renders a container for the Turnstile widget to mount into', () => {
     const container = fixture.nativeElement.querySelector('.contact-form__turnstile');
     expect(container).withContext('expected a .contact-form__turnstile mount point').not.toBeNull();

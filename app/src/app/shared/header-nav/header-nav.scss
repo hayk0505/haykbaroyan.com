@@ -1,5 +1,7 @@
 @use 'tokens' as *;
 
+$_nav-breakpoint: 790px;
+
 :host {
   display: block;
 }
@@ -17,80 +19,136 @@
   flex-wrap: wrap;
   gap: 16px;
 
-  @media (max-width: $breakpoint-mobile) {
-    padding: 16px 20px;
+  @media (max-width: $_nav-breakpoint) {
+    padding: 16px clamp(12px, 4vw, 20px);
     gap: 12px;
   }
 }
 
-.header-nav__backdrop {
-  position: fixed;
-  inset: 0;
-  background: $color-scrim;
-  z-index: 9;
+.header-nav__left {
+  display: flex;
+  align-items: center;
+}
+
+.header-nav__logo {
+  display: flex;
+  margin-right: 14px;
+}
+
+.header-nav__logo-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: block;
+}
+
+.header-nav__nav-pill {
+  display: inline-flex;
+  align-items: center;
+
+  @media (max-width: $_nav-breakpoint) {
+    position: relative;
+  }
+}
+
+.header-nav__burger {
+  display: none;
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid rgba($color-cream, 0.22);
+  border-radius: 50%;
+  background: $color-bg-surface-alt;
+  cursor: pointer;
+  transition: border-radius 0.2s ease;
+
+  @media (max-width: $_nav-breakpoint) {
+    display: flex;
+  }
+}
+
+.header-nav__nav-pill--open .header-nav__burger {
+  @media (max-width: $_nav-breakpoint) {
+    border-radius: 22px 0 0 22px;
+  }
+}
+
+.header-nav__burger-line {
+  display: block;
+  width: 16px;
+  height: 2px;
+  background: $color-cream;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.header-nav__nav-pill--open .header-nav__burger-line--top {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.header-nav__nav-pill--open .header-nav__burger-line--mid {
+  opacity: 0;
+}
+
+.header-nav__nav-pill--open .header-nav__burger-line--bottom {
+  transform: translateY(-7px) rotate(-45deg);
 }
 
 .header-nav__links {
-  display: none;
-  gap: 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 10px;
+  background: $color-bg-surface-alt;
+  border: 1px solid rgba($color-cream, 0.22);
+  border-radius: 22px;
   font: 400 13px $font-label;
   color: rgba($color-cream, 0.7);
-  flex-wrap: wrap;
+
+  @media (max-width: $_nav-breakpoint) {
+    position: absolute;
+    left: 44px;
+    top: 0;
+    height: 44px;
+    gap: 20px;
+    padding: 0 20px 0 12px;
+    white-space: nowrap;
+    border-left: none;
+    border-radius: 0 22px 22px 0;
+    opacity: 0;
+    max-width: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 20;
+    transition: max-width 0.25s ease, opacity 0.2s ease;
+  }
 }
 
-.header-nav__links--open {
-  display: flex;
-  position: absolute;
-  top: 100%;
-  left: 48px;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 180px;
-  background: $color-bg-surface;
-  border: 1px solid rgba($color-cream, 0.12);
-  border-radius: 0;
-  padding: 10px;
-  z-index: 10;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
-
-  @media (max-width: $breakpoint-mobile) {
-    left: 20px;
+.header-nav__nav-pill--open .header-nav__links {
+  @media (max-width: $_nav-breakpoint) {
+    opacity: 1;
+    // Capped at 320px on wider mobile widths, but shrinks on narrow phones
+    // so the expanded pill can never push past the viewport's right edge
+    // (100px reserves the burger's own width plus outer header padding).
+    max-width: min(320px, calc(100vw - 100px));
+    pointer-events: auto;
   }
+}
 
-  .header-nav__link {
-    padding: 8px 12px;
-    border-radius: 8px;
+.header-nav__link {
+  padding: 2px 12px;
 
-    &:hover {
-      background: rgba($color-cream, 0.06);
-    }
+  &:hover {
+    text-decoration: underline;
   }
 }
 
 .header-nav__link--active {
   color: $color-cream;
-}
-
-.header-nav__burger {
-  position: relative;
-  z-index: 11;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 5px;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-}
-
-.header-nav__burger-line {
-  display: block;
-  width: 100%;
-  height: 2px;
-  background: $color-cream;
 }
 
 .header-nav__buttons {
@@ -99,7 +157,7 @@
   display: flex;
   gap: 10px;
 
-  @media (max-width: $breakpoint-mobile) {
+  @media (max-width: $_nav-breakpoint) {
     gap: 6px;
     flex-wrap: wrap;
     justify-content: flex-end;
@@ -115,8 +173,13 @@
   border: 1px solid rgba($color-cream, 0.22);
   border-radius: 22px;
   color: $color-cream;
+  transition: transform 0.15s ease;
 
-  @media (max-width: $breakpoint-mobile) {
+  &:hover {
+    border-color: rgba($color-cream, 0.9);
+  }
+
+  @media (max-width: $_nav-breakpoint) {
     width: 32px;
     height: 32px;
     padding: 0;
@@ -131,18 +194,19 @@
   height: 15px;
   flex-shrink: 0;
 
-  @media (max-width: $breakpoint-mobile) {
+  @media (max-width: $_nav-breakpoint) {
     display: block;
   }
 }
 
 .header-nav__pill-label {
-  @media (max-width: $breakpoint-mobile) {
+  @media (max-width: $_nav-breakpoint) {
     display: none;
   }
 }
 
 .header-nav__download {
+  border: 2px solid rgba(#8a6f4a, 0.8);
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -152,8 +216,13 @@
   padding: 8px 8px 8px 14px;
   font: 700 11px $font-label;
   white-space: nowrap;
+  transition: transform 0.15s ease;
 
-  @media (max-width: $breakpoint-mobile) {
+  &:hover {
+    border-color: rgba($color-cream, 0.1);
+  }
+
+  @media (max-width: $_nav-breakpoint) {
     height: 32px;
     padding: 0 6px 0 12px;
     font-size: 10px;
@@ -173,7 +242,7 @@
   font-size: 11px;
   flex-shrink: 0;
 
-  @media (max-width: $breakpoint-mobile) {
+  @media (max-width: $_nav-breakpoint) {
     width: 20px;
     height: 20px;
     font-size: 10px;

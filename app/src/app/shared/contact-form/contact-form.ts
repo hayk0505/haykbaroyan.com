@@ -21,7 +21,6 @@ declare global {
   }
 }
 
-// Public site key — safe to commit, pairs with the secret key held server-side in the Worker.
 const TURNSTILE_SITE_KEY = '0x4AAAAAAD_v0Z8ywo7nHxBr';
 
 @Component({
@@ -48,8 +47,6 @@ export class ContactForm implements OnDestroy {
   });
 
   constructor() {
-    // afterNextRender only fires in the browser — never during SSR/prerendering — so it's
-    // the safe place to touch `window` and the DOM for the Turnstile widget.
     afterNextRender(() => this.renderTurnstile());
   }
 
@@ -65,7 +62,7 @@ export class ContactForm implements OnDestroy {
       return;
     }
 
-    const maxAttempts = 50; // ~5s at 100ms intervals, then give up rather than poll forever
+    const maxAttempts = 50;
     let attempts = 0;
     const attemptRender = () => {
       if (!window.turnstile) {
@@ -95,6 +92,7 @@ export class ContactForm implements OnDestroy {
     this.http.post('/api/contact', { ...this.form.getRawValue(), turnstileToken: token }).subscribe({
       next: () => {
         this.status.set('success');
+        this.form.reset();
         this.resetTurnstile();
       },
       error: () => {
@@ -104,8 +102,6 @@ export class ContactForm implements OnDestroy {
     });
   }
 
-  // Turnstile tokens are single-use and short-lived — every submit attempt (success or
-  // failure) needs a fresh one before the form can be submitted again.
   private resetTurnstile(): void {
     this.turnstileToken.set(null);
     if (this.widgetId && window.turnstile) {

@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build the Angular frontend for haykbaroyan.com — four prerendered static routes (`/`, `/cv`, `/projects`, `/contact`) faithfully converted from `design-reference/portfolio-mockup.html` (Tasks 1-18) and `Hayk Baroyan Portfolio_v2.html` (Tasks 19-30, adding the Contact page and a 720px responsive retrofit), with a working CV PDF download and a placeholder contact form. Tasks 31-32 redesign the `ProjectCard` component to match a newer reference, `Hayk Baroyan Portfolio_v3.html`. Task 33 redesigns `HeaderNav` to add a home-routing logo and a mobile burger/desktop-always-open nav pill.
+**Goal:** Build the Angular frontend for haykbaroyan.com — four prerendered static routes (`/`, `/cv`, `/projects`, `/contact`) faithfully converted from `design-reference/portfolio-mockup.html` (Tasks 1-18) and `Hayk Baroyan Portfolio_v2.html` (Tasks 19-30, adding the Contact page and a 720px responsive retrofit), with a working CV PDF download and a placeholder contact form. Tasks 31-32 redesign the `ProjectCard` component to match a newer reference, `Hayk Baroyan Portfolio_v3.html`. Task 33 redesigns `HeaderNav` to add a home-routing logo and a mobile burger/desktop-always-open nav pill. Task 35 redesigns the downloadable CV PDF to a two-column layout and standardizes the site's title to "Senior Front-End Engineer" everywhere.
 
 **Architecture:** Angular v20, standalone components, signal-based inputs (`input()`), `OnPush` change detection throughout. Content lives in typed data files, not templates. Routing is client-side (`provideRouter`) with all three routes additionally configured for build-time prerendering via `@angular/ssr` (no live Node server — output is static files). A small Node script generates the downloadable CV PDF from the same data files the CV page renders.
 
@@ -24,6 +24,7 @@
 - Out of scope: `/projects/eu-deepfake` page, `/api/contact` backend (including real Turnstile integration), Docker/Caddy/droplet/CI setup.
 - ProjectCard visual redesign (Tasks 31-32): sourced from `Hayk Baroyan Portfolio_v3.html` (repo root — same kind of self-contained bundled export as v2, open directly in a browser to view) via `docs/superpowers/specs/2026-07-29-project-card-redesign-design.md`. Adds `previewUrl`/`ctaLabel` fields and renames `badgeLabel` → `statusLabel` on `ProjectEntry`; swaps `imageSide` for both existing entries (DigitalDustLibrary left→right, EU Deepfake Toolkit right→left) to match the new reference's actual DOM order. No new shared design tokens — three one-off decorative colors (`#1a1915`, `#d3c6a9`, `#8a6f4a`) are scoped locally to `project-card.scss`. The CTA icon still derives from `external()` exactly as before (both entries render `↗`), not copied from the reference's placeholder-link icon.
 - HeaderNav logo + nav-pill redesign (Task 33): per `docs/superpowers/specs/2026-07-29-header-nav-redesign-design.md`. Adds `app/public/logo.svg` as a home-routing logo (same position on mobile/desktop); removes the text "Home" link; replaces the burger/links markup with a `.header-nav__nav-pill` that on mobile (`≤ $breakpoint-mobile`) shows only a burger button which expands the pill rightward on click (hamburger-to-X icon morph, absolutely-positioned expansion so it overlays rather than reflows other header content, no backdrop scrim), and on desktop is permanently expanded with no burger at all. No new design tokens.
+- CV PDF redesign + title standardization (Tasks 35-36): per `docs/superpowers/specs/2026-07-29-cv-pdf-redesign-and-title-update-design.md`. Rewrites `app/scripts/generate-cv-pdf.ts` to a two-column, sectioned pdfkit layout (Contact, Professional Experience, Education and Training, Programming Languages and Web Technologies, AI Tools & Workflows, Language Skills) populated entirely from existing data files — no fabricated street address or CEFR sub-scores. Standardizes the site's professional title to "Senior Front-End Engineer" in `index.html`'s `<title>`, the home page eyebrow and headline (now 3 stacked lines), and the CV page badge — the two spots that already said "Senior front-end engineer" (meta description, home page intro paragraph) are left untouched.
 
 ---
 
@@ -6237,4 +6238,317 @@ Expected: no uncommitted changes. If Steps 2-4 produced fixes, commit them now:
 ```bash
 git add app
 git commit -m "Fix visual discrepancies found in HeaderNav verification pass"
+```
+
+---
+
+### Task 35: CV PDF redesign + site-wide "Senior Front-End Engineer" title update
+
+**Files:**
+- Modify: `app/scripts/generate-cv-pdf.ts`
+- Modify: `app/src/index.html`
+- Modify: `app/src/app/pages/home-page/home-page.html`
+- Modify: `app/src/app/pages/cv-page/cv-page.html`
+- Regenerate (build artifact): `app/public/assets/Hayk-Baroyan-CV.pdf`
+
+**Interfaces:**
+- Consumes: `EXPERIENCE_ENTRIES`, `EDUCATION_ENTRIES`, `TECH_TAGS`, `AI_TOOLS` (all from `skills.data.ts`), `LANGUAGES`, `CONTACT` — all unchanged, read-only.
+- Produces: no new exports; this task only changes the PDF script's internal layout code and four lines of static page copy.
+
+No automated tests exist for `generate-cv-pdf.ts` (it's a build-time Node script) and none are added — verification is running the script and checking its output, plus a visual check.
+
+- [ ] **Step 1: Replace `app/scripts/generate-cv-pdf.ts` in full**
+
+```typescript
+import PDFDocument from 'pdfkit';
+import { createWriteStream, mkdirSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { EXPERIENCE_ENTRIES } from '../src/app/data/experience.data';
+import { EDUCATION_ENTRIES } from '../src/app/data/education.data';
+import { TECH_TAGS, AI_TOOLS } from '../src/app/data/skills.data';
+import { LANGUAGES } from '../src/app/data/languages.data';
+import { CONTACT } from '../src/app/data/contact.data';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const outputPath = join(__dirname, '../public/assets/Hayk-Baroyan-CV.pdf');
+mkdirSync(dirname(outputPath), { recursive: true });
+
+const stripHtml = (value: string): string => value.replace(/<[^>]+>/g, '');
+
+const PAGE_WIDTH = 595.28;
+const PAGE_MARGIN = 50;
+const LABEL_COL_WIDTH = 130;
+const CONTENT_GAP = 20;
+const CONTENT_COL_X = PAGE_MARGIN + LABEL_COL_WIDTH + CONTENT_GAP;
+const CONTENT_COL_WIDTH = PAGE_WIDTH - PAGE_MARGIN * 2 - LABEL_COL_WIDTH - CONTENT_GAP;
+
+const doc = new PDFDocument({ size: 'A4', margin: PAGE_MARGIN });
+doc.pipe(createWriteStream(outputPath));
+
+function ensureRoom(minSpace: number): void {
+  if (doc.y > doc.page.height - PAGE_MARGIN - minSpace) {
+    doc.addPage();
+    doc.x = CONTENT_COL_X;
+    doc.y = PAGE_MARGIN;
+  }
+}
+
+function drawSection(label: string, contentFn: () => void): void {
+  const startY = doc.y;
+  doc.font('Helvetica-Bold').fontSize(10).fillColor('#000000');
+  doc.text(label.toUpperCase(), PAGE_MARGIN, startY, { width: LABEL_COL_WIDTH });
+  doc.x = CONTENT_COL_X;
+  doc.y = startY;
+  contentFn();
+  doc.x = PAGE_MARGIN;
+  doc.moveDown(0.75);
+  doc.moveTo(PAGE_MARGIN, doc.y).lineTo(PAGE_WIDTH - PAGE_MARGIN, doc.y).strokeColor('#cccccc').stroke();
+  doc.moveDown(0.75);
+}
+
+// Header: bold name (left) + italic title (right), same line.
+doc.font('Helvetica-Bold').fontSize(24).fillColor('#000000');
+doc.text('Hayk Baroyan', PAGE_MARGIN, PAGE_MARGIN, { width: PAGE_WIDTH - PAGE_MARGIN * 2 });
+const nameBottomY = doc.y;
+
+doc.font('Times-Italic').fontSize(13).fillColor('#444444');
+doc.text('Senior Front-End Engineer', PAGE_MARGIN, PAGE_MARGIN + 6, {
+  width: PAGE_WIDTH - PAGE_MARGIN * 2,
+  align: 'right',
+});
+
+doc.y = Math.max(nameBottomY, doc.y);
+doc.moveDown(0.75);
+doc.moveTo(PAGE_MARGIN, doc.y).lineTo(PAGE_WIDTH - PAGE_MARGIN, doc.y).strokeColor('#cccccc').stroke();
+doc.moveDown(1);
+
+// Contact
+drawSection('Contact', () => {
+  const halfWidth = (CONTENT_COL_WIDTH - CONTENT_GAP) / 2;
+  const leftX = CONTENT_COL_X;
+  const rightX = CONTENT_COL_X + halfWidth + CONTENT_GAP;
+  const topY = doc.y;
+  const lineHeight = 16;
+
+  doc.font('Helvetica-Bold').fontSize(10).fillColor('#000000');
+  doc.text('Phone:', leftX, topY, { width: halfWidth, continued: true });
+  doc.font('Helvetica').text(` ${CONTACT.phoneDisplay}`);
+  doc.font('Helvetica-Bold').text('Email:', leftX, topY + lineHeight, { width: halfWidth, continued: true });
+  doc.font('Helvetica').text(` ${CONTACT.email}`);
+
+  doc.font('Helvetica-Bold').text('Location:', rightX, topY, { width: halfWidth, continued: true });
+  doc.font('Helvetica').text(` ${CONTACT.location}`);
+  doc.font('Helvetica-Bold').text('LinkedIn:', rightX, topY + lineHeight, { width: halfWidth, continued: true });
+  doc.font('Helvetica').text(` ${CONTACT.linkedin}`);
+  doc.font('Helvetica-Bold').text('GitHub:', rightX, topY + lineHeight * 2, { width: halfWidth, continued: true });
+  doc.font('Helvetica').text(` ${CONTACT.github}`);
+
+  doc.x = CONTENT_COL_X;
+  doc.y = topY + lineHeight * 3 + 4;
+});
+
+// Professional Experience
+drawSection('Professional Experience', () => {
+  EXPERIENCE_ENTRIES.forEach((entry, index) => {
+    if (index > 0) doc.moveDown(1);
+    ensureRoom(70);
+
+    doc.font('Helvetica-Bold').fontSize(11).fillColor('#000000');
+    doc.text(`${entry.role} | ${entry.dateLabel}`, CONTENT_COL_X, doc.y, { width: CONTENT_COL_WIDTH });
+
+    doc.font('Helvetica').fontSize(10).fillColor('#555555');
+    doc.text(entry.company, CONTENT_COL_X, doc.y, { width: CONTENT_COL_WIDTH });
+
+    doc.moveDown(0.3);
+    doc.font('Helvetica').fontSize(10).fillColor('#000000');
+    doc.text(stripHtml(entry.description), CONTENT_COL_X, doc.y, { width: CONTENT_COL_WIDTH });
+
+    doc.moveDown(0.3);
+    doc.font('Helvetica-Bold').fontSize(9).fillColor('#000000');
+    doc.text('Technologies used', CONTENT_COL_X, doc.y, { width: CONTENT_COL_WIDTH });
+
+    doc.font('Helvetica').fontSize(9).fillColor('#333333');
+    for (const tag of entry.tags) {
+      doc.text(`•  ${tag}`, CONTENT_COL_X, doc.y, { width: CONTENT_COL_WIDTH });
+    }
+
+    if (entry.companyLinkHref) {
+      doc.moveDown(0.2);
+      doc.font('Helvetica').fontSize(9).fillColor('#1a5276');
+      doc.text(`Link ${entry.companyLinkHref}`, CONTENT_COL_X, doc.y, { width: CONTENT_COL_WIDTH });
+    }
+  });
+});
+
+// Education and Training
+drawSection('Education and Training', () => {
+  EDUCATION_ENTRIES.forEach((entry, index) => {
+    if (index > 0) doc.moveDown(0.75);
+    ensureRoom(50);
+
+    doc.font('Helvetica-Bold').fontSize(11).fillColor('#000000');
+    doc.text(entry.title, CONTENT_COL_X, doc.y, { width: CONTENT_COL_WIDTH });
+
+    doc.font('Helvetica').fontSize(10).fillColor('#555555');
+    doc.text(`${entry.institution} — ${entry.dateLabel}`, CONTENT_COL_X, doc.y, { width: CONTENT_COL_WIDTH });
+  });
+});
+
+// Programming Languages and Web Technologies
+drawSection('Programming Languages and Web Technologies', () => {
+  doc.font('Helvetica').fontSize(10).fillColor('#000000');
+  for (const tag of TECH_TAGS) {
+    ensureRoom(20);
+    doc.text(`•  ${tag.label}`, CONTENT_COL_X, doc.y, { width: CONTENT_COL_WIDTH });
+  }
+});
+
+// AI Tools & Workflows
+drawSection('AI Tools & Workflows', () => {
+  AI_TOOLS.forEach((tool, index) => {
+    if (index > 0) doc.moveDown(0.5);
+    ensureRoom(40);
+
+    doc.font('Helvetica-Bold').fontSize(10).fillColor('#000000');
+    doc.text(`${tool.name} — ${tool.level}`, CONTENT_COL_X, doc.y, { width: CONTENT_COL_WIDTH });
+
+    doc.font('Helvetica').fontSize(9).fillColor('#555555');
+    doc.text(tool.description, CONTENT_COL_X, doc.y, { width: CONTENT_COL_WIDTH });
+  });
+});
+
+// Language Skills
+drawSection('Language Skills', () => {
+  const nativeLang = LANGUAGES.find((l) => l.level === 'Native');
+  const otherLangs = LANGUAGES.filter((l) => l.level !== 'Native');
+
+  if (nativeLang) {
+    doc.font('Helvetica').fontSize(10).fillColor('#000000');
+    doc.text(`Mother tongue: ${nativeLang.name}`, CONTENT_COL_X, doc.y, { width: CONTENT_COL_WIDTH });
+    doc.moveDown(0.5);
+  }
+
+  const tableColWidth = CONTENT_COL_WIDTH / 2;
+  const headerY = doc.y;
+  doc.font('Helvetica-Bold').fontSize(9).fillColor('#000000');
+  doc.text('Language', CONTENT_COL_X, headerY, { width: tableColWidth });
+  doc.text('Level', CONTENT_COL_X + tableColWidth, headerY, { width: tableColWidth });
+  doc.moveDown(0.3);
+  doc.moveTo(CONTENT_COL_X, doc.y).lineTo(CONTENT_COL_X + CONTENT_COL_WIDTH, doc.y).strokeColor('#cccccc').stroke();
+  doc.moveDown(0.3);
+
+  doc.font('Helvetica').fontSize(10).fillColor('#000000');
+  for (const lang of otherLangs) {
+    const rowY = doc.y;
+    doc.text(lang.name, CONTENT_COL_X, rowY, { width: tableColWidth });
+    doc.text(lang.level, CONTENT_COL_X + tableColWidth, rowY, { width: tableColWidth });
+    doc.moveDown(0.4);
+  }
+});
+
+doc.end();
+```
+
+- [ ] **Step 2: Regenerate the PDF and confirm it builds without errors**
+
+```bash
+cd app
+npm run generate:cv-pdf
+```
+
+Expected: exits 0, no stack trace, and `app/public/assets/Hayk-Baroyan-CV.pdf` is rewritten (check its size grew from the previous single-column version — the new layout has substantially more content, so expect several KB larger; an exact byte count isn't meaningful to assert, just confirm the file exists and is non-trivially sized):
+
+```bash
+ls -la app/public/assets/Hayk-Baroyan-CV.pdf
+```
+
+- [ ] **Step 3: Update `app/src/index.html`**
+
+Change line 5:
+
+```html
+  <title>Hayk Baroyan — Senior Front-End Engineer</title>
+```
+
+(Line 6, the meta description, already says "Senior front-end engineer..." — leave it untouched.)
+
+- [ ] **Step 4: Update `app/src/app/pages/home-page/home-page.html`**
+
+Change line 4:
+
+```html
+    <div class="home-page__eyebrow">◑ SENIOR FRONT-END ENGINEER, BUILDING FULL-STACK</div>
+```
+
+Change line 6:
+
+```html
+      <h1 class="home-page__headline">Senior<br />Front-end<br />engineer<span class="home-page__headline-dot">.</span></h1>
+```
+
+(Line 8, the intro paragraph, already says "Senior front-end engineer..." — leave it untouched.)
+
+- [ ] **Step 5: Update `app/src/app/pages/cv-page/cv-page.html`**
+
+Change line 8:
+
+```html
+      <span>◑ Senior front-end engineer, building full-stack</span>
+```
+
+- [ ] **Step 6: Run the full test suite**
+
+```bash
+cd app
+npm test -- --watch=false --browsers=ChromeHeadless
+```
+
+Expected: all specs PASS, zero failures (neither `home-page.spec.ts` nor `cv-page.spec.ts` assert on these exact strings today — confirmed by search before writing this task — so no test file should need editing; if a failure surfaces here that wasn't anticipated, that's a real finding, not something to route around).
+
+- [ ] **Step 7: Full production build**
+
+```bash
+cd app
+npm run build
+```
+
+Expected: succeeds with no errors (this also re-runs `generate:cv-pdf` via the `build` npm script, so it re-confirms Step 2 as part of a real build).
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add app/scripts/generate-cv-pdf.ts app/src/index.html app/src/app/pages/home-page/home-page.html app/src/app/pages/cv-page/cv-page.html app/public/assets/Hayk-Baroyan-CV.pdf
+git commit -m "Redesign the downloadable CV PDF and standardize the site title to Senior Front-End Engineer"
+```
+
+---
+
+### Task 36: Final verification pass for the CV PDF redesign + title update
+
+**Files:** none (verification only)
+
+- [ ] **Step 1: Open the regenerated PDF and check its layout**
+
+Open `app/public/assets/Hayk-Baroyan-CV.pdf`. Confirm: a two-column layout throughout (bold uppercase section label on the left, content on the right) for Contact, Professional Experience, Education and Training, Programming Languages and Web Technologies, AI Tools & Workflows, and Language Skills, in that order; the header shows "Hayk Baroyan" bold on the left and "Senior Front-End Engineer" in italic on the right of the same line; each experience entry shows its bullet "Technologies used" list and a "Link ..." line only where a link exists (VOLO/kofile.com and MERSOFT/ofoodo.com — not 4P1P); the Language Skills table shows Russian/C1 and English/B2 with "Mother tongue: Armenian" above it; nothing is cut off or overlapping, and if content spans a second page it breaks between entries, not mid-heading.
+
+- [ ] **Step 2: Serve the built site and check the title text sitewide**
+
+```bash
+npx http-server app/dist/app/browser -p 8080
+```
+
+Confirm the browser tab title reads "Hayk Baroyan — Senior Front-End Engineer"; open `/` and confirm the eyebrow reads "SENIOR FRONT-END ENGINEER, BUILDING FULL-STACK" and the big headline now reads three stacked lines ("Senior" / "Front-end" / "engineer.") without visually colliding with the intro paragraph or wrapping oddly; open `/cv` and confirm the badge line under the name reads "Senior front-end engineer, building full-stack".
+
+- [ ] **Step 3: Stop the local server, then confirm a clean git state**
+
+```bash
+git status
+```
+
+Expected: no uncommitted changes. If Steps 1-2 produced fixes, commit them now:
+
+```bash
+git add app
+git commit -m "Fix issues found in CV PDF / title-update verification pass"
 ```

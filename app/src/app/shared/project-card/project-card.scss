@@ -34,7 +34,7 @@ $_muted-accent: #8a6f4a;
 }
 
 .project-card--dark {
-  border: 1px solid rgba($color-cream, 0.16);
+  border: 2px solid rgba($color-cream, 0.16);
   background: $color-bg-surface-alt;
   color: $color-cream;
   transition: border-color 0.15s ease;
@@ -45,13 +45,13 @@ $_muted-accent: #8a6f4a;
 }
 
 .project-card--light {
-  border: 1px solid rgba($color-cream, 0.16);
+  border: 2px solid rgba(#8a6f4a, 0.8);
   background: $color-cream;
   color: $color-ink;
   transition: transform 0.15s ease;
 
   &:hover {
-    border-color: rgba($color-cream, 0.5);
+    border-color: rgba($color-cream, 0.1);
   }
 }
 
@@ -64,6 +64,7 @@ $_muted-accent: #8a6f4a;
   overflow: hidden;
 
   @media (max-width: $breakpoint-mobile) {
+    order: -1;
     min-height: 150px;
     max-height: 170px;
     border-radius: 22px 22px 0 0;
@@ -74,7 +75,7 @@ $_muted-accent: #8a6f4a;
   border-radius: 0 22px 22px 0;
 
   @media (max-width: $breakpoint-mobile) {
-    border-radius: 0 0 22px 22px;
+    border-radius: 22px 22px 0 0;
   }
 }
 
