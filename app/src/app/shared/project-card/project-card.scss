@@ -61,6 +61,7 @@ $_muted-accent: #8a6f4a;
   padding: 20px 20px 0;
   border-radius: 22px 0 0 22px;
   overflow: hidden;
+  height: 300px;
 
   @media (max-width: $breakpoint-mobile) {
     min-height: 150px;
