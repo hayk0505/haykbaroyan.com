@@ -11,10 +11,13 @@ describe('ProjectCard', () => {
       providers: [provideRouter([])],
     });
     fixture = TestBed.createComponent(ProjectCard);
-    fixture.componentRef.setInput('badgeLabel', '01 · IN BUILD');
+    fixture.componentRef.setInput('index', 1);
+    fixture.componentRef.setInput('statusLabel', '01 · IN BUILD');
     fixture.componentRef.setInput('heading', 'DigitalDust Library');
     fixture.componentRef.setInput('description', 'A multi-author platform.');
     fixture.componentRef.setInput('tags', ['SvelteKit', 'React']);
+    fixture.componentRef.setInput('previewUrl', 'digitaldustlibrary.com');
+    fixture.componentRef.setInput('ctaLabel', 'Visit live site');
     fixture.componentRef.setInput('screenshotCaption', '[ screenshot ]');
   });
 
@@ -74,16 +77,34 @@ describe('ProjectCard', () => {
 
   it('renders the screenshot caption placeholder when no imageSrc is given', () => {
     fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('.project-card__image-img')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.project-card__screenshot-img')).toBeNull();
     expect(fixture.nativeElement.textContent).toContain('[ screenshot ]');
   });
 
   it('renders an image instead of the placeholder when imageSrc is given', () => {
     fixture.componentRef.setInput('imageSrc', '/assets/DDL-image.png');
     fixture.detectChanges();
-    const img: HTMLImageElement = fixture.nativeElement.querySelector('.project-card__image-img');
+    const img: HTMLImageElement = fixture.nativeElement.querySelector('.project-card__screenshot-img');
     expect(img.getAttribute('src')).toBe('/assets/DDL-image.png');
     expect(img.getAttribute('alt')).toBe('DigitalDust Library');
     expect(fixture.nativeElement.textContent).not.toContain('[ screenshot ]');
+  });
+
+  it('renders the zero-padded index and status label', () => {
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.project-card__index').textContent).toBe('01');
+    expect(fixture.nativeElement.querySelector('.project-card__status').textContent).toBe('01 · IN BUILD');
+  });
+
+  it('zero-pads a single-digit index but leaves a two-digit index untouched', () => {
+    fixture.componentRef.setInput('index', 12);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.project-card__index').textContent).toBe('12');
+  });
+
+  it('renders the preview URL in the chrome bar and the CTA label in the CTA row', () => {
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.project-card__chrome-url').textContent).toBe('digitaldustlibrary.com');
+    expect(fixture.nativeElement.querySelector('.project-card__cta').textContent).toContain('Visit live site');
   });
 });

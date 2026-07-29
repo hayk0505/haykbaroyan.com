@@ -11,9 +11,10 @@
     </div>
   </div>
   <div class="projects-page__list">
-    @for (project of projects; track project.heading) {
+    @for (project of projects; track project.heading; let i = $index) {
       <app-project-card
-        [badgeLabel]="project.badgeLabel"
+        [index]="i + 1"
+        [statusLabel]="project.statusLabel"
         [heading]="project.heading"
         [description]="project.description"
         [tags]="project.tags"
@@ -22,6 +23,8 @@
         [external]="project.external"
         [imageSide]="project.imageSide"
         [variant]="project.variant"
+        [previewUrl]="project.previewUrl"
+        [ctaLabel]="project.ctaLabel"
         [screenshotCaption]="project.screenshotCaption"
         [imageSrc]="project.imageSrc ?? ''"
       />

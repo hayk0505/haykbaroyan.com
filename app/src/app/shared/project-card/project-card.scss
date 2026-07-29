@@ -1,12 +1,18 @@
 @use 'tokens' as *;
 
+// One-off decorative colors from the v3 reference with no shared token
+// equivalent — scoped to this component rather than added to _tokens.scss.
+$_dark-chrome-bg: #1a1915;
+$_light-screenshot-bg: #d3c6a9;
+$_muted-accent: #8a6f4a;
+
 :host {
   display: block;
 }
 
 .project-card {
   display: grid;
-  grid-template-columns: 1fr 1.1fr;
+  grid-template-columns: 1fr 1.15fr;
   border-radius: 22px;
   overflow: hidden;
 
@@ -20,7 +26,7 @@
 }
 
 .project-card--image-right {
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: 1.15fr 1fr;
 
   @media (max-width: $breakpoint-mobile) {
     grid-template-columns: 1fr;
@@ -31,23 +37,28 @@
   border: 1px solid rgba($color-cream, 0.16);
   background: $color-bg-surface-alt;
   color: $color-cream;
+  transition: border-color 0.15s ease;
+
+  &:hover {
+    border-color: rgba($color-cream, 0.5);
+  }
 }
 
 .project-card--light {
   background: $color-cream;
   color: $color-ink;
-  border: 1px solid rgba($color-ink, 0.16);
+  transition: transform 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
 }
 
 .project-card__image {
-  background-color: $color-bg-elevated-dark;
-  background-image: repeating-linear-gradient(135deg, rgba($color-chip, 0.08) 0 10px, rgba($color-chip, 0) 10px 20px);
-  min-height: 340px;
+  background-color: $_dark-chrome-bg;
   display: flex;
-  align-items: flex-end;
-  padding: 18px;
-  font: 400 10.5px $font-label;
-  color: rgba($color-cream, 0.5);
+  flex-direction: column;
+  padding: 20px 20px 0;
   border-radius: 22px 0 0 22px;
   overflow: hidden;
 
@@ -66,29 +77,98 @@
   }
 }
 
-.project-card__image--photo {
+.project-card--light .project-card__image {
+  background-color: $color-bg-elevated-light;
+}
+
+.project-card__chrome-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px 12px;
+}
+
+.project-card__chrome-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.project-card__chrome-dot--1 {
+  background: $color-accent;
+}
+
+.project-card__chrome-dot--2 {
+  background: $color-chip;
+}
+
+.project-card__chrome-dot--3 {
+  background: rgba($color-cream, 0.3);
+}
+
+.project-card--light .project-card__chrome-dot--2 {
+  background: $_muted-accent;
+}
+
+.project-card--light .project-card__chrome-dot--3 {
+  background: rgba($color-ink, 0.25);
+}
+
+.project-card__chrome-url {
+  flex: 1;
+  margin-left: 10px;
+  font: 400 10.5px $font-label;
+  color: rgba($color-cream, 0.5);
+  background: $color-bg-surface;
+  border-radius: 7px;
+  padding: 6px 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-card--light .project-card__chrome-url {
+  color: rgba($color-ink, 0.55);
+  background: $color-input-bg;
+}
+
+.project-card__screenshot {
+  flex: 1;
+  background-color: $color-bg-elevated-dark;
+  background-image: repeating-linear-gradient(135deg, rgba($color-chip, 0.08) 0 10px, rgba($color-chip, 0) 10px 20px);
+  min-height: 230px;
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
+  font: 400 10.5px $font-label;
+  color: rgba($color-cream, 0.5);
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+}
+
+.project-card--light .project-card__screenshot {
+  background-color: $_light-screenshot-bg;
+  background-image: repeating-linear-gradient(135deg, rgba($color-ink, 0.06) 0 10px, rgba($color-ink, 0) 10px 20px);
+  color: rgba($color-ink, 0.5);
+}
+
+.project-card__screenshot--photo {
   background-image: none;
   padding: 0;
 }
 
-.project-card__image-img {
+.project-card__screenshot-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.project-card--light .project-card__image {
-  background-color: $color-bg-elevated-light;
-  background-image: repeating-linear-gradient(135deg, rgba($color-ink, 0.06) 0 10px, rgba($color-ink, 0) 10px 20px);
-  color: rgba($color-ink, 0.5);
-}
-
 .project-card__body {
   padding: 38px 40px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 
   @media (max-width: $breakpoint-mobile) {
     padding: 24px 22px;
@@ -97,37 +177,29 @@
 
 .project-card__top {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  gap: 14px;
 }
 
-.project-card__badge {
-  font: 400 11px $font-label;
-  letter-spacing: 0.14em;
+.project-card__index {
+  font: 700 30px $font-heading;
   color: $color-accent;
 }
 
-.project-card__icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid rgba($color-cream, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
+.project-card__status {
+  font: 400 11px $font-label;
+  letter-spacing: 0.12em;
+  color: rgba($color-cream, 0.55);
 }
 
-.project-card--light .project-card__icon {
-  background: $color-ink;
-  color: $color-cream;
-  border: none;
+.project-card--light .project-card__status {
+  color: $_muted-accent;
 }
 
 .project-card__heading {
-  margin: 18px 0 14px;
-  font: 700 40px/0.98 $font-heading;
-  letter-spacing: -0.02em;
+  margin: 20px 0 14px;
+  font: 700 42px/0.96 $font-heading;
+  letter-spacing: -0.03em;
 
   @media (max-width: $breakpoint-mobile) {
     font-size: 30px;
@@ -135,9 +207,9 @@
 }
 
 .project-card__description {
-  margin: 0;
-  font: 400 14.5px/1.6 $font-body;
-  max-width: 460px;
+  margin: 0 0 24px;
+  font: 400 14.5px/1.62 $font-body;
+  max-width: 480px;
 }
 
 .project-card--dark .project-card__description {
@@ -152,5 +224,31 @@
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
+  margin-top: auto;
+}
+
+.project-card__cta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin-top: 26px;
+  font: 700 12px $font-label;
+}
+
+.project-card__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba($color-cream, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.project-card--light .project-card__icon {
+  background: $color-ink;
+  color: $color-cream;
+  border: none;
 }

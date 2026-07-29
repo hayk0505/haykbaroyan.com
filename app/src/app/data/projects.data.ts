@@ -1,5 +1,5 @@
 export interface ProjectEntry {
-  badgeLabel: string;
+  statusLabel: string;
   heading: string;
   description: string;
   tags: string[];
@@ -8,13 +8,15 @@ export interface ProjectEntry {
   external: boolean;
   imageSide: 'left' | 'right';
   variant: 'dark' | 'light';
+  previewUrl: string;
+  ctaLabel: string;
   screenshotCaption: string;
   imageSrc?: string;
 }
 
 export const PROJECT_ENTRIES: ProjectEntry[] = [
   {
-    badgeLabel: '01 · IN BUILD — EXTERNAL ↗',
+    statusLabel: 'IN BUILD · EXTERNAL SITE',
     heading: 'Digital Dust Library',
     description:
       'A multi-author blog and magazine platform I designed and built end to end — covering tech, psychology, sociology and management. A real full-stack system: a SvelteKit public blog, a React admin panel with editorial review workflows, and a .NET 10 API behind both.',
@@ -22,22 +24,26 @@ export const PROJECT_ENTRIES: ProjectEntry[] = [
     linkHref: 'https://github.com/hayk0505/DigitalDustLibrary',
     routerLink: '',
     external: true,
-    imageSide: 'left',
+    imageSide: 'right',
     variant: 'dark',
+    previewUrl: 'digitaldustlibrary.com',
+    ctaLabel: 'Visit live site',
     screenshotCaption: '[ screenshot — DigitalDustLibrary blog + admin ]',
     imageSrc: '/assets/DDL-image.png',
   },
   {
-    badgeLabel: '02 · LIVE DEMO — CASE STUDY ↗',
+    statusLabel: 'LIVE DEMO · CASE STUDY',
     heading: 'EU Deepfake Toolkit',
     description:
-      'A multimodal deepfake-detection toolkit developed as part of my Master’s thesis — analysing video, audio and image signals together to flag manipulated media. Includes a live, interactive demo you can run in the browser.',
+      'A multimodal deepfake-detection toolkit developed as part of my Master\'s thesis — analysing video, audio and image signals together to flag manipulated media. Includes a live, interactive demo you can run in the browser.',
     tags: ['AI/ML', 'Multimodal Detection', 'Research'],
     linkHref: 'https://github.com/hayk0505/eu-deepfake-toolkit',
     routerLink: '',
     external: true,
-    imageSide: 'right',
+    imageSide: 'left',
     variant: 'light',
+    previewUrl: 'haykbaroyan.com/projects/eu-deepfake',
+    ctaLabel: 'Read case study & run demo',
     screenshotCaption: '[ screenshot — live detection demo ]',
     imageSrc: '/assets/eu-deepfake-detection-image.png',
   },

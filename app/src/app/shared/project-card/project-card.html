@@ -35,36 +35,54 @@
 
 <ng-template #content>
   @if (imageSide() === 'left') {
-    <div class="project-card__image" [class.project-card__image--photo]="imageSrc()">
-      @if (imageSrc()) {
-        <img class="project-card__image-img" [src]="imageSrc()" [alt]="heading()" loading="lazy" />
-      } @else {
-        <span>{{ screenshotCaption() }}</span>
-      }
+    <div class="project-card__image">
+      <div class="project-card__chrome-bar">
+        <span class="project-card__chrome-dot project-card__chrome-dot--1"></span>
+        <span class="project-card__chrome-dot project-card__chrome-dot--2"></span>
+        <span class="project-card__chrome-dot project-card__chrome-dot--3"></span>
+        <span class="project-card__chrome-url">{{ previewUrl() }}</span>
+      </div>
+      <div class="project-card__screenshot" [class.project-card__screenshot--photo]="imageSrc()">
+        @if (imageSrc()) {
+          <img class="project-card__screenshot-img" [src]="imageSrc()" [alt]="heading()" loading="lazy" />
+        } @else {
+          <span>{{ screenshotCaption() }}</span>
+        }
+      </div>
     </div>
   }
   <div class="project-card__body">
-    <div>
-      <div class="project-card__top">
-        <span class="project-card__badge">{{ badgeLabel() }}</span>
-        <span class="project-card__icon">{{ external() ? '↗' : '→' }}</span>
-      </div>
-      <h2 class="project-card__heading">{{ heading() }}</h2>
-      <p class="project-card__description">{{ description() }}</p>
+    <div class="project-card__top">
+      <span class="project-card__index">{{ displayIndex() }}</span>
+      <span class="project-card__status">{{ statusLabel() }}</span>
     </div>
+    <h2 class="project-card__heading">{{ heading() }}</h2>
+    <p class="project-card__description">{{ description() }}</p>
     <div class="project-card__tags">
       @for (tag of tags(); track tag) {
         <app-tag-chip [label]="tag" [variant]="variant() === 'light' ? 'filled' : 'outlined'" />
       }
     </div>
+    <div class="project-card__cta">
+      <span>{{ ctaLabel() }}</span>
+      <span class="project-card__icon">{{ external() ? '↗' : '→' }}</span>
+    </div>
   </div>
   @if (imageSide() === 'right') {
-    <div class="project-card__image" [class.project-card__image--photo]="imageSrc()">
-      @if (imageSrc()) {
-        <img class="project-card__image-img" [src]="imageSrc()" [alt]="heading()" loading="lazy" />
-      } @else {
-        <span>{{ screenshotCaption() }}</span>
-      }
+    <div class="project-card__image">
+      <div class="project-card__chrome-bar">
+        <span class="project-card__chrome-dot project-card__chrome-dot--1"></span>
+        <span class="project-card__chrome-dot project-card__chrome-dot--2"></span>
+        <span class="project-card__chrome-dot project-card__chrome-dot--3"></span>
+        <span class="project-card__chrome-url">{{ previewUrl() }}</span>
+      </div>
+      <div class="project-card__screenshot" [class.project-card__screenshot--photo]="imageSrc()">
+        @if (imageSrc()) {
+          <img class="project-card__screenshot-img" [src]="imageSrc()" [alt]="heading()" loading="lazy" />
+        } @else {
+          <span>{{ screenshotCaption() }}</span>
+        }
+      </div>
     </div>
   }
 </ng-template>
