@@ -33,23 +33,27 @@
   </div>
 }
 
+<ng-template #imageBlock>
+  <div class="project-card__image">
+    <div class="project-card__chrome-bar">
+      <span class="project-card__chrome-dot project-card__chrome-dot--1"></span>
+      <span class="project-card__chrome-dot project-card__chrome-dot--2"></span>
+      <span class="project-card__chrome-dot project-card__chrome-dot--3"></span>
+      <span class="project-card__chrome-url">{{ previewUrl() }}</span>
+    </div>
+    <div class="project-card__screenshot" [class.project-card__screenshot--photo]="imageSrc()">
+      @if (imageSrc()) {
+        <img class="project-card__screenshot-img" [src]="imageSrc()" [alt]="heading()" loading="lazy" />
+      } @else {
+        <span>{{ screenshotCaption() }}</span>
+      }
+    </div>
+  </div>
+</ng-template>
+
 <ng-template #content>
   @if (imageSide() === 'left') {
-    <div class="project-card__image">
-      <div class="project-card__chrome-bar">
-        <span class="project-card__chrome-dot project-card__chrome-dot--1"></span>
-        <span class="project-card__chrome-dot project-card__chrome-dot--2"></span>
-        <span class="project-card__chrome-dot project-card__chrome-dot--3"></span>
-        <span class="project-card__chrome-url">{{ previewUrl() }}</span>
-      </div>
-      <div class="project-card__screenshot" [class.project-card__screenshot--photo]="imageSrc()">
-        @if (imageSrc()) {
-          <img class="project-card__screenshot-img" [src]="imageSrc()" [alt]="heading()" loading="lazy" />
-        } @else {
-          <span>{{ screenshotCaption() }}</span>
-        }
-      </div>
-    </div>
+    <ng-container *ngTemplateOutlet="imageBlock" />
   }
   <div class="project-card__body">
     <div class="project-card__top">
@@ -69,20 +73,6 @@
     </div>
   </div>
   @if (imageSide() === 'right') {
-    <div class="project-card__image">
-      <div class="project-card__chrome-bar">
-        <span class="project-card__chrome-dot project-card__chrome-dot--1"></span>
-        <span class="project-card__chrome-dot project-card__chrome-dot--2"></span>
-        <span class="project-card__chrome-dot project-card__chrome-dot--3"></span>
-        <span class="project-card__chrome-url">{{ previewUrl() }}</span>
-      </div>
-      <div class="project-card__screenshot" [class.project-card__screenshot--photo]="imageSrc()">
-        @if (imageSrc()) {
-          <img class="project-card__screenshot-img" [src]="imageSrc()" [alt]="heading()" loading="lazy" />
-        } @else {
-          <span>{{ screenshotCaption() }}</span>
-        }
-      </div>
-    </div>
+    <ng-container *ngTemplateOutlet="imageBlock" />
   }
 </ng-template>
