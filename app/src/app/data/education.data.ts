@@ -9,7 +9,7 @@ export const EDUCATION_ENTRIES: EducationEntry[] = [
     dateLabel: '2024 — 2026',
     title: 'M.Sc. Management & Information Technology',
     institution:
-      'West Saxon University of Applied Sciences, Zwickau (Germany) · Armenian State University of Economics — joint program',
+      'West Saxon University of Applied Sciences, Zwickau (Germany) · Armenian State University of Economics — joint program. Thesis: multimodal deepfake detection (EU Deepfake Toolkit).',
   },
   {
     dateLabel: '2017 — 2018',
