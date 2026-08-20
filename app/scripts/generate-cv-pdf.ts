@@ -81,9 +81,9 @@ drawSection('Contact', () => {
   doc.font('Helvetica-Bold').text('Location:', rightX, topY, { width: halfWidth, continued: true });
   doc.font('Helvetica').text(` ${CONTACT.location}`);
   doc.font('Helvetica-Bold').text('LinkedIn:', rightX, topY + lineHeight, { width: halfWidth, continued: true });
-  doc.font('Helvetica').text(` ${stripArrow(CONTACT.linkedinHandle)}`);
-  doc.font('Helvetica-Bold').text('GitHub:', rightX, topY + lineHeight * 2, { width: halfWidth, continued: true });
-  doc.font('Helvetica').text(` ${stripArrow(CONTACT.githubHandle)}`);
+  doc.font('Helvetica').fillColor('#1a5276').text(` ${stripArrow(CONTACT.linkedinHandle)}`, { link: CONTACT.linkedin, underline: true });
+  doc.font('Helvetica-Bold').fillColor('#000000').text('GitHub:', rightX, topY + lineHeight * 2, { width: halfWidth, continued: true });
+  doc.font('Helvetica').fillColor('#1a5276').text(` ${stripArrow(CONTACT.githubHandle)}`, { link: CONTACT.github, underline: true });
 
   doc.x = CONTENT_COL_X;
   doc.y = topY + lineHeight * 3 + 4;
