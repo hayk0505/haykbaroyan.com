@@ -36,3 +36,24 @@
   color: rgba($color-cream, 0.6);
   margin-top: 5px;
 }
+
+.education-entry__diploma-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font: 700 11px $font-label;
+  color: $color-chip;
+  text-decoration: none;
+  border-bottom: 1px solid rgba($color-chip, 0.4);
+  padding-bottom: 1px;
+  transition: border-color 0.15s ease;
+
+  &:hover {
+    border-color: $color-chip;
+  }
+}
+
+.education-entry__diploma-icon {
+  font-size: 12px;
+}

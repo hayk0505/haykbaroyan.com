@@ -3,5 +3,11 @@
   <div>
     <div class="education-entry__title">{{ title() }}</div>
     <div class="education-entry__institution">{{ institution() }}</div>
+    @if (diplomaUrl()) {
+      <a [href]="diplomaUrl()" target="_blank" rel="noopener" class="education-entry__diploma-link">
+        View diploma
+        <span class="education-entry__diploma-icon">↗</span>
+      </a>
+    }
   </div>
 </div>

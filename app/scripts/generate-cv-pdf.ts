@@ -133,6 +133,12 @@ drawSection('Education and Training', () => {
 
     doc.font('Helvetica').fontSize(10).fillColor('#555555');
     doc.text(`${entry.institution} — ${entry.dateLabel}`, CONTENT_COL_X, doc.y, { width: CONTENT_COL_WIDTH });
+
+    if (entry.diplomaUrl) {
+      doc.moveDown(0.2);
+      doc.font('Helvetica').fontSize(9).fillColor('#1a5276');
+      doc.text('View diploma', CONTENT_COL_X, doc.y, { width: CONTENT_COL_WIDTH, link: entry.diplomaUrl, underline: true });
+    }
   });
 });
 

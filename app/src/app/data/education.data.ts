@@ -2,6 +2,7 @@ export interface EducationEntry {
   dateLabel: string;
   title: string;
   institution: string;
+  diplomaUrl?: string;
 }
 
 export const EDUCATION_ENTRIES: EducationEntry[] = [
@@ -10,6 +11,7 @@ export const EDUCATION_ENTRIES: EducationEntry[] = [
     title: 'M.Sc. Management & Information Technology',
     institution:
       'West Saxon University of Applied Sciences, Zwickau (Germany) · Armenian State University of Economics — joint program. Thesis: multimodal deepfake detection (EU Deepfake Toolkit).',
+    diplomaUrl: 'https://haykbaroyan.com/assets/Hayk-Baroyan-Diploma.jpg',
   },
   {
     dateLabel: '2017 — 2018',

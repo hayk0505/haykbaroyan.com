@@ -10,5 +10,6 @@ export class EducationEntry {
   dateLabel = input.required<string>();
   title = input.required<string>();
   institution = input.required<string>();
+  diplomaUrl = input<string>();
   isLast = input<boolean>(false);
 }
