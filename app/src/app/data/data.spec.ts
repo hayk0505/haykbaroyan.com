@@ -47,5 +47,6 @@ describe('data files', () => {
   it('has contact info', () => {
     expect(CONTACT.email).toBe('haykbaroyan@yahoo.com');
     expect(CONTACT.github).toBe('https://github.com/hayk0505');
+    expect(CONTACT.website).toBe('https://haykbaroyan.com');
   });
 });

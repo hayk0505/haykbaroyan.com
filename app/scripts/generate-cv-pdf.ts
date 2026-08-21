@@ -77,6 +77,9 @@ drawSection('Contact', () => {
   doc.font('Helvetica').text(` ${CONTACT.phoneDisplay}`);
   doc.font('Helvetica-Bold').text('Email:', leftX, topY + lineHeight, { width: halfWidth, continued: true });
   doc.font('Helvetica').text(` ${CONTACT.email}`);
+  doc.font('Helvetica-Bold').text('Website:', leftX, topY + lineHeight * 2, { width: halfWidth, continued: true });
+  doc.font('Helvetica').fillColor('#1a5276').text(` ${stripArrow(CONTACT.websiteHandle)}`, { link: CONTACT.website, underline: true });
+  doc.fillColor('#000000');
 
   doc.font('Helvetica-Bold').text('Location:', rightX, topY, { width: halfWidth, continued: true });
   doc.font('Helvetica').text(` ${CONTACT.location}`);
@@ -134,10 +137,10 @@ drawSection('Education and Training', () => {
     doc.font('Helvetica').fontSize(10).fillColor('#555555');
     doc.text(`${entry.institution} — ${entry.dateLabel}`, CONTENT_COL_X, doc.y, { width: CONTENT_COL_WIDTH });
 
-    if (entry.diplomaUrl) {
+    for (const diploma of entry.diplomas ?? []) {
       doc.moveDown(0.2);
       doc.font('Helvetica').fontSize(9).fillColor('#1a5276');
-      doc.text('View diploma', CONTENT_COL_X, doc.y, { width: CONTENT_COL_WIDTH, link: entry.diplomaUrl, underline: true });
+      doc.text(diploma.label, CONTENT_COL_X, doc.y, { width: CONTENT_COL_WIDTH, link: diploma.url, underline: true });
     }
   });
 });

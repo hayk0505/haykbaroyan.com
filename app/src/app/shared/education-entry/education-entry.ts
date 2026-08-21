@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { DiplomaLink } from '../../data/education.data';
 
 @Component({
   selector: 'app-education-entry',
@@ -10,6 +11,6 @@ export class EducationEntry {
   dateLabel = input.required<string>();
   title = input.required<string>();
   institution = input.required<string>();
-  diplomaUrl = input<string>();
+  diplomas = input<DiplomaLink[]>();
   isLast = input<boolean>(false);
 }

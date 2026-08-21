@@ -3,11 +3,15 @@
   <div>
     <div class="education-entry__title">{{ title() }}</div>
     <div class="education-entry__institution">{{ institution() }}</div>
-    @if (diplomaUrl()) {
-      <a [href]="diplomaUrl()" target="_blank" rel="noopener" class="education-entry__diploma-link">
-        View diploma
-        <span class="education-entry__diploma-icon">↗</span>
-      </a>
+    @if (diplomas()?.length) {
+      <div class="education-entry__diploma-links">
+        @for (diploma of diplomas(); track diploma.url) {
+          <a [href]="diploma.url" target="_blank" rel="noopener" class="education-entry__diploma-link">
+            {{ diploma.label }}
+            <span class="education-entry__diploma-icon">↗</span>
+          </a>
+        }
+      </div>
     }
   </div>
 </div>
