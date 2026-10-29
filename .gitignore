@@ -3,6 +3,7 @@ dist/
 .env
 .env.local
 .dev.vars
+.wrangler/
 *.log
 .DS_Store
 .superpowers/
@@ -13,3 +14,13 @@ design-reference/
 VSCode_Agent_Build_Prompt.md
 Hayk Baroyan Portfolio.html
 Hayk Baroyan Portfolio_v2.html
+Hayk Baroyan Portfolio_v3.html
+
+# Local-only plaintext sources and generated assets
+surprise-src/
+
+# Design specs — kept locally, not tracked
+docs/superpowers/specs/
+
+# Unit tests — kept locally, not tracked
+*.spec.ts

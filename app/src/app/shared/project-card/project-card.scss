@@ -25,6 +25,12 @@ $_muted-accent: #8a6f4a;
   cursor: default;
 }
 
+// Split card: the primary CTA's ::after covers the whole card so it stays
+// clickable end to end; the repo link sits above that overlay.
+.project-card--split {
+  position: relative;
+}
+
 .project-card--image-right {
   grid-template-columns: 1.15fr 1fr;
 
@@ -238,10 +244,40 @@ $_muted-accent: #8a6f4a;
 
 .project-card__cta {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 10px;
   margin-top: 26px;
   font: 700 12px $font-label;
+}
+
+.project-card__cta-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.project-card__cta-link--primary {
+  margin-right: 18px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1; // above the positioned screenshot, which paints later in DOM order
+  }
+}
+
+.project-card__cta-link--repo {
+  position: relative;
+  z-index: 2;
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+  }
 }
 
 .project-card__icon {

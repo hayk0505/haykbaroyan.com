@@ -4,6 +4,7 @@ export interface ProjectEntry {
   description: string;
   tags: string[];
   linkHref: string;
+  repoHref?: string;
   routerLink: string;
   external: boolean;
   imageSide: 'left' | 'right';
@@ -21,7 +22,8 @@ export const PROJECT_ENTRIES: ProjectEntry[] = [
     description:
       'A multi-author blog and magazine platform I designed and built end to end — covering tech, psychology, sociology and management. A real full-stack system: a SvelteKit public blog, a React admin panel with editorial review workflows, and a .NET 10 API behind both.',
     tags: ['SvelteKit', 'React', '.NET 10', 'PostgreSQL'],
-    linkHref: 'https://github.com/hayk0505/DigitalDustLibrary',
+    linkHref: 'https://digitaldustlibrary.com',
+    repoHref: 'https://github.com/hayk0505/DigitalDustLibrary',
     routerLink: '',
     external: true,
     imageSide: 'right',

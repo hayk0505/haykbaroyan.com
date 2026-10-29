@@ -102,6 +102,31 @@ describe('ProjectCard', () => {
     expect(fixture.nativeElement.querySelector('.project-card__index').textContent).toBe('12');
   });
 
+  it('renders the live-site link and a separate repo link, without nesting anchors, when repoHref is given', () => {
+    fixture.componentRef.setInput('external', true);
+    fixture.componentRef.setInput('linkHref', 'https://digitaldustlibrary.com');
+    fixture.componentRef.setInput('repoHref', 'https://github.com/hayk0505/DigitalDustLibrary');
+    fixture.detectChanges();
+    const card = fixture.nativeElement.querySelector('.project-card');
+    expect(card.tagName).toBe('DIV');
+    expect(card.querySelector('a a')).toBeNull();
+    const primary = card.querySelector('.project-card__cta-link--primary');
+    expect(primary.getAttribute('href')).toBe('https://digitaldustlibrary.com');
+    expect(primary.getAttribute('target')).toBe('_blank');
+    expect(primary.textContent).toContain('Visit live site');
+    const repo = card.querySelector('.project-card__cta-link--repo');
+    expect(repo.getAttribute('href')).toBe('https://github.com/hayk0505/DigitalDustLibrary');
+    expect(repo.getAttribute('target')).toBe('_blank');
+    expect(repo.textContent).toContain('View repo');
+  });
+
+  it('renders no repo link when repoHref is not given', () => {
+    fixture.componentRef.setInput('external', true);
+    fixture.componentRef.setInput('linkHref', 'https://example.com');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.project-card__cta-link--repo')).toBeNull();
+  });
+
   it('renders the preview URL in the chrome bar and the CTA label in the CTA row', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.project-card__chrome-url').textContent).toBe('digitaldustlibrary.com');

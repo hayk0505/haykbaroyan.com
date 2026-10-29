@@ -17,6 +17,8 @@ export class ProjectCard {
   description = input.required<string>();
   tags = input.required<string[]>();
   linkHref = input<string>('');
+  /** Optional source-repo URL shown as a second CTA beside the primary one. */
+  repoHref = input<string>('');
   routerLink = input<string>('');
   external = input<boolean>(false);
   imageSide = input<'left' | 'right'>('left');
