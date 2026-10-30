@@ -68,6 +68,7 @@ function buildOnce() {
         ? answers.map((a) => core.finalPassword(a, [ceks['1'], ceks['2'], ceks['3']]))
         : answers;
     const payload = { riddle: fill(st.riddle), hints: fill(st.hints) };
+    if (st.digit != null) payload.digit = String(st.digit);
     if (id === 'f') payload.closing = fill(st.closing);
     s[id] = { w: passwords.map((p) => wrap(cek, id, p)), ...seal(id, cek, payload) };
   }
@@ -96,11 +97,16 @@ async function selfCheck(data) {
       if (!cek) throw new Error(`stage ${id}: accepted answer failed to unlock`);
       const p = await core.open(data, id, cek);
       if (JSON.stringify(p.riddle) !== JSON.stringify(fill(st.riddle))) throw new Error(`stage ${id}: payload mismatch`);
+      if (p.digit !== (st.digit != null ? String(st.digit) : undefined)) throw new Error(`stage ${id}: digit mismatch`);
     }
     if (await core.unlock(data, id, core.norm('definitely not it'))) throw new Error(`stage ${id}: wrong answer unlocked`);
     ceks.push(await core.unlock(data, id, core.norm(st.answers[0])));
   }
   const code = content.stages.f.answers[0];
+  const digits = ['1', '2', '3'].map((id) => content.stages[id].digit);
+  if (digits.every((d) => d != null) && digits.join('') !== core.normDigits(code)) {
+    throw new Error(`final: stage digits ${digits.join('')} do not spell the code`);
+  }
   const good = await core.unlock(data, 'f', core.finalPassword(core.normDigits(code), ceks));
   if (!good) throw new Error('final: code failed to unlock');
   if (await core.unlock(data, 'f', core.normDigits(code))) throw new Error('final: code alone must not unlock');

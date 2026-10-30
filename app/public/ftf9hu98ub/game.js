@@ -20,8 +20,8 @@
     eyebrow: 'CASE #0111 · THE MISSING GIFT',
     intro: [
       'Detective, something that belongs to you has gone missing from this apartment.',
-      'The case file has three witnesses. Each one will play you a melody. Name the film or series it comes from, and the witness will tell you where to look.',
-      'Examine everything you find. Small details matter in this line of work.',
+      'The case file has three witnesses. Each one will play you a melody. Name the film or series it comes from, and the witness will give you a number.',
+      'Write each number down. Small details matter in this line of work.',
       'Once all three have talked, come back to this board. CASE-4 is waiting.'
     ],
     boardLabel: 'Case board',
@@ -57,6 +57,7 @@
     empty: 'Resolution: No input. Type an answer first.',
     wrong: 'Resolution: Cannot reproduce. Try again, detective.',
     fixed: 'Resolution: Fixed.',
+    digit: 'Report code number',
     evidence: 'Evidence location',
 
     escalate: 'Escalate to Support',
@@ -76,7 +77,7 @@
       key: 'CASE-4',
       title: 'Final report',
       blockedBy: 'blocked by CASE-1, CASE-2, CASE-3',
-      prompt: 'Three items, three numbers. Enter them in track order.',
+      prompt: 'Three witnesses, three numbers. Enter them in track order.',
       codeLabel: 'Report code',
       codePlaceholder: '– – –',
       submit: 'File report',
@@ -521,13 +522,8 @@
       submitStage(n, t.input, t.form);
     });
 
-    t.riddle = h('div', { class: 'riddle', tabindex: '-1' });
-    t.solved = h(
-      'div',
-      { class: 'solved', hidden: true },
-      h('p', { class: 'resolution', text: STRINGS.fixed }),
-      h('section', { class: 'evidence' }, h('h3', { class: 'support-title', text: STRINGS.evidence }), t.riddle)
-    );
+    t.digit = h('p', { class: 'digit', hidden: true });
+    t.solved = h('div', { class: 'solved', hidden: true }, h('p', { class: 'resolution', text: STRINGS.fixed }), t.digit);
 
     t.support = supportBlock(id);
 
@@ -622,7 +618,8 @@
   function refreshSupport(id) {
     const s = T[id].support;
     const solved = isSolved(id);
-    if (id === 'f' && !solved) {
+    // Tracks only need help naming the melody; only the final report has a place to look.
+    if (id === 'f' ? !solved : solved) {
       s.root.hidden = true;
       return;
     }
@@ -648,7 +645,11 @@
       t.chip.dataset.state = st;
       t.form.hidden = solved;
       t.solved.hidden = !solved;
-      if (solved && !t.riddle.childElementCount) t.riddle.append(...riddleBlock(payloads[id].riddle));
+      const digit = solved && payloads[id].digit;
+      if (digit && t.digit.hidden) {
+        t.digit.append(h('span', { class: 'digit-label', text: STRINGS.digit }), h('span', { class: 'digit-value', text: digit }));
+        t.digit.hidden = false;
+      }
       refreshSupport(id);
     }
 

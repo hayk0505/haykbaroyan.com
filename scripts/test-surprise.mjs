@@ -69,6 +69,7 @@ for (const id of ['1', '2', '3']) {
         const payload = await core.open(data, id, cek);
         assert.deepEqual(payload.riddle, fill(st.riddle));
         assert.deepEqual(payload.hints, fill(st.hints));
+        assert.equal(payload.digit, st.digit);
         ceks[id] ??= cek;
       }
     }
